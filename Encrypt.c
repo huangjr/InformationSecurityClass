@@ -11,8 +11,8 @@ typedef struct charList{
 //coordiante of playfair
 typedef struct coordinate
 {
-    int column;
     int row;
+    int column;
 }coordinate;
 //method for searching coordinate of plaintext in playfair
 coordinate find(char character, char cipherMap[5][5]);
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]){  // form = {cipher} {key} {plaintext}
             cout << cipherText[i];
         }
     }else if(strcmp(argv[1], "playfair") == 0){
-        playfair(strlwr(argv[3]), argv[2]);
+        playfair(strlwr(argv[3]), strlwr(argv[2]));
         for(int i =0; i <= strlen(argv[3])-1; i++){
             cout << cipherText[i];
         }
@@ -84,7 +84,7 @@ void playfair(char *plainText, char *key){
     for(int i=0; i<= 25; i++){
         //add all of the character a-i k-z, skip j=9
         if(i == 9){
-            //do nothing
+            //do nothing, to skip j
         }else add(i+97);
     }
     current=head;
@@ -93,39 +93,56 @@ void playfair(char *plainText, char *key){
         if(plainText[i] == 'j'){
             plainText[i] = 'i';
         }
+    }for(int i=0; i<=strlen(key)-1; i++){
+        remove(key[i]);     //remove the character in plaintext, current would be in head after remove
     }
     //declare cipher map
     char cipherMap[5][5];
+    int l=0;    //the anti-prevent index
     for(int i=0; i<=4; i++){
         for(int j=0; j<=4; j++){
-            if((5*i+j) < strlen(key)-1){
-                cipherMap[i][j]=key[5*i+j];
-                remove(key[5*i+j]);     //remove the character in plaintext
+            if((5*i+j) < strlen(key)){
+                bool add=true;          
+                // to see if the adding text is in the range of removed element
+                if((5*i+j) > 0){    //if init at 0 nothing would be added
+                    for(int k=0; k<=(5*i+j+l-1); k++){
+                        if(key[k] == key[5*i+j+l]){
+                            add = false;
+                            l++;                            //guide the next element to next one
+                            cipherMap[i][j]=key[5*i+j+l];   //the current element haven't repeated
+                        }
+                    }
+                }
+                if(add){
+                    cipherMap[i][j]=key[5*i+j+l]; //the current element haven't repeated
+                }
             }else{
-                current=current->next;
-                cipherMap[i][j]= current->character;
+                current=current->next;  //because it start from head
+                cipherMap[i][j] = current->character;   //segmentation fault?????
             }
         }
     }
     for(int i=0; i<= strlen(plainText)-1; i+=2){
-        struct coordinate pos[2];
-        for(int j=0; j<=1; j++){
-            pos[j]=find(plainText[i+j], cipherMap);
+        struct coordinate pos[3];
+        for(int j=0; j<=2; j++){
+            if(j <=2 ){
+                pos[j]=find(plainText[i+j], cipherMap);
+            }else{
+                pos[j]=find('x', cipherMap);
+            }
         }
         if(pos[0].column==pos[1].column && pos[0].row==pos[1].row){
-            pos[1].column=3;    //any random number
-            pos[1].column=4;
+            cipherText[i+0] = cipherMap[pos[2].row][pos[0].column];
+            cipherText[i+1] = cipherMap[pos[0].row][pos[2].column];
+        }else if(pos[0].column==pos[1].column && pos[0].row!=pos[1].row){
+            cipherText[i+0] = cipherMap[((pos[0].row)+1)%5][pos[0].column];
+            cipherText[i+1] = cipherMap[((pos[1].row)+1)%5][pos[0].column]; 
+        }else if(pos[0].column!=pos[1].column && pos[0].row==pos[1].row){
+            cipherText[i+0] = cipherMap[pos[0].row][((pos[0].column)+1)%5];
+            cipherText[i+1] = cipherMap[pos[0].row][((pos[1].column)+1)%5];
+        }else if(pos[0].column!=pos[1].column && pos[0].row!=pos[1].row){
             cipherText[i+0] = cipherMap[pos[0].row][pos[1].column];
             cipherText[i+1] = cipherMap[pos[1].row][pos[0].column];
-        }else if(pos[0].column==pos[1].column && pos[0].row!=pos[1].row){
-            cipherText[i+0] = cipherMap[pos[0].column][((pos[0].row)+1)%5];
-            cipherText[i+1] = cipherMap[pos[0].column][((pos[1].row)+1)%5]; 
-        }else if(pos[0].column!=pos[1].column && pos[0].row==pos[1].row){
-            cipherText[i+0] = cipherMap[((pos[0].column)+1)%5][pos[0].row];
-            cipherText[i+1] = cipherMap[((pos[1].column)+1)%5][pos[0].row];
-        }else if(pos[0].column!=pos[1].column && pos[0].row!=pos[1].row){
-            cipherText[i+0] = cipherMap[pos[1].row][pos[0].column];
-            cipherText[i+1] = cipherMap[pos[0].row][pos[1].column];
         }else{
             //do nothing
         }
@@ -137,7 +154,7 @@ void vernam(char *plainText, char *key){
     //generate the Veram key
     strcat(key, plainText);
     for(int i=0; i <=strlen(plainText)-1; i++){
-        cipherText[i]= ((plainText[i]-97)^(key[i]-97))+97;
+        cipherText[i]= (char)(((plainText[i]-97)^(key[i]-97))+95);  // 97 would exceed the limit so we set it to 95
     }
     strupr(cipherText);
 }
@@ -221,9 +238,9 @@ int remove(char character){
         current=current->next;
         if(current->character == character){
             pre->next=current->next;
-            delete current;
+            free(current);
             current=head;
-            return 0;
+            return 0;       // return when the wanted character found, or it would be a endless loop
         }
     }
 }
@@ -231,13 +248,10 @@ int remove(char character){
 coordinate find(char character, char cipherMap[5][5]){
     //linear searching take O(n), suck but it works.
     //i=j here, make them the same at first
-    int a,b;
     for(int i=0; i <= 4; i++){
         for(int j=0; j <= 4; j++){
             if(cipherMap[i][j] == character){
-                a=i;
-                b=j;
-                return coordinate{b,a};   //j=column, i=row
+                return coordinate{i,j};   //i=row, j=column
             }
         }
     }
