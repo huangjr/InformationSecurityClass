@@ -101,8 +101,8 @@ void playfair(char *plainText, char *key){
     int l=0;    //the anti-prevent index
     for(int i=0; i<=4; i++){
         for(int j=0; j<=4; j++){
-            if((5*i+j) < strlen(key)){
-                bool add=true;          
+            if((5*i+j) < strlen(key)-l){
+                bool add=true;
                 // to see if the adding text is in the range of removed element
                 if((5*i+j) > 0){    //if init at 0 nothing would be added
                     for(int k=0; k<=(5*i+j+l-1); k++){
