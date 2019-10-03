@@ -99,19 +99,16 @@ def Vernam_decrypt(Key,Ciphertext):
     plaintext = ''
     ciphertext = Ciphertext.lower()
     key = Key.lower()
-    lenth = len(key)
 
     for i in range(len(ciphertext)):
-        key += chr( ((ord(ciphertext[i])-95)^(ord(key[i])-97)) +97)
+        key += chr( ((ord(ciphertext[i])-97)^(ord(key[i])-97)) +97)
 
+    for i in range(len(ciphertext)):
+        plaintext += chr( ((ord(ciphertext[i])-97)^(ord(key[i])-97)) +97)
+        # plaintext += chr(((ord(ciphertext[i]-97)^(ord(key[i]-97))+97)
 
-    # for i in range(len(ciphertext)):
-    #     plaintext += chr( ((ord(ciphertext[i])-97)^(ord(key[i])-97)) +97)
-    #     # plaintext += chr(((ord(ciphertext[i]-97)^(ord(key[i]-97))+97)
+    return plaintext.lower()
 
-    # return plaintext.lower()
-    plaintext = key[lenth:].lower()
-    return plaintext
 
 #row transposition
 
@@ -140,22 +137,13 @@ def Row_decrypt(Key,Ciphertext):
             
     
     result = [a for a in map(list,result)]
-<<<<<<< HEAD
-    # return result
-    sort_result = []
-
-    for i,char in enumerate(key):
-        sort_result.insert(int(char)-1, result[i])
-=======
 
     
     sort_result = [["" for j in range(rows)] for i in range(len(key))]
     
     for i, char in enumerate(key):
         sort_result[int(char)-1] =  result[i]
->>>>>>> solve row problem
 
-    # return sort_result
     plaintext = ''
     for x in range(len(sort_result[0])):
         try:
