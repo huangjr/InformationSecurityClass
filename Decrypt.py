@@ -206,3 +206,6 @@ if Method == 'playfair': print(Playfair_decrypt(Key,Ciphertext))
 if Method == 'vernam': print(Vernam_decrypt(Key,Ciphertext))
 if Method == 'row': print(Row_decrypt(Key,Ciphertext))
 if Method == 'rail_fence': print(RailFence_decrypt(Key,Ciphertext))
+
+
+print("tttttttteeesssssstttttt")
