@@ -155,7 +155,8 @@ def Row_decrypt(Key,Ciphertext):
         except:      
             pass
 
-    return plaintext.lower()
+    # return plaintext.lower()
+    return plaintext
 
 
 
