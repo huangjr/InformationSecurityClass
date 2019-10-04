@@ -59,6 +59,8 @@ def Playfair_decrypt(Key,Ciphertext):
             new_ciphertext.append(char)
 
     if len(new_ciphertext) % 2 == 1: new_ciphertext.append('X')
+        # if new_ciphertext[-1] != 'X': new_ciphertext.append('X')
+        # else: new_ciphertext.append('Q')
 
     reverse_puzzle = {k: v for v,k in puzzle_map.items()}
 
@@ -89,7 +91,7 @@ def Playfair_decrypt(Key,Ciphertext):
 
         plaintext += puzzle_map[pre_x1,pre_y1] + puzzle_map[pre_x2,pre_y2]
 
-    return plaintext
+    return plaintext.lower()
 
 
 # vernam
@@ -108,8 +110,8 @@ def Vernam_decrypt(Key,Ciphertext):
     #     # plaintext += chr(((ord(ciphertext[i]-97)^(ord(key[i]-97))+97)
 
     # return plaintext.lower()
-    plaintext = key[lenth:].lower()
-    return plaintext
+    plaintext = key[lenth:]
+    return plaintext.lower()
 
 #row transposition
 
@@ -117,24 +119,34 @@ def Row_decrypt(Key,Ciphertext):
     result = []
     key = Key
     ciphertext = Ciphertext
-    basic_amount = int(len(ciphertext) / len(key))
-    extra_amount = len(ciphertext) % len(key)
-    for i in range(extra_amount):
-        result.append(ciphertext[:basic_amount + 1])
-        ciphertext = ciphertext[basic_amount + 1:]
+    split_numbers = {}
 
-    for i in range(len(key) - extra_amount):
-        result.append(ciphertext[:basic_amount])
-        ciphertext = ciphertext[basic_amount:]
 
+    extra = len(ciphertext) % len(key)
+    if extra == 0:
+        rows = int(len(ciphertext)/len(key))
+        for i in range(0, len(ciphertext), rows):
+            result.append(ciphertext[i: i+rows])
+    else:
+        rows = int(len(Ciphertext)/len(key)) + 1
+        for i in range(extra):
+            split_numbers[i] = rows
+        for i in range(extra, len(key)):
+            split_numbers[i] = rows - 1
+        for char in key:
+            result.append(ciphertext[0:split_numbers[int(char) - 1]])
+            ciphertext = ciphertext[split_numbers[int(char) - 1]:]
+    
+            
+    
     result = [a for a in map(list,result)]
-    # return result
-    sort_result = []
+    
+    sort_result = [["" for j in range(rows)] for i in range(len(key))]
+    
+    for i, char in enumerate(key):
+        sort_result[int(char)-1] =  result[i]
 
-    for i,char in enumerate(key):
-        sort_result.insert(int(char)-1, result[i])
 
-    # return sort_result
     plaintext = ''
     for x in range(len(sort_result[0])):
         try:
@@ -143,7 +155,10 @@ def Row_decrypt(Key,Ciphertext):
         except:      
             pass
 
-    return plaintext.lower()
+    # return plaintext.lower()
+    return plaintext
+
+
 
 
 # rail fence
@@ -197,3 +212,5 @@ if Method == 'playfair': print(Playfair_decrypt(Key,Ciphertext))
 if Method == 'vernam': print(Vernam_decrypt(Key,Ciphertext))
 if Method == 'row': print(Row_decrypt(Key,Ciphertext))
 if Method == 'rail_fence': print(RailFence_decrypt(Key,Ciphertext))
+
+print("test merge and branch")
