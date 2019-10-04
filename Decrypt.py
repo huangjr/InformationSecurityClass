@@ -155,8 +155,8 @@ def Row_decrypt(Key,Ciphertext):
         except:      
             pass
 
-    # return plaintext.lower()
-    return plaintext
+ 
+    return plaintext.lower()
 
 
 
@@ -213,4 +213,3 @@ if Method == 'vernam': print(Vernam_decrypt(Key,Ciphertext))
 if Method == 'row': print(Row_decrypt(Key,Ciphertext))
 if Method == 'rail_fence': print(RailFence_decrypt(Key,Ciphertext))
 
-print("test merge and branch")
