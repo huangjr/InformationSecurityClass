@@ -91,7 +91,7 @@ def Playfair_decrypt(Key,Ciphertext):
 
         plaintext += puzzle_map[pre_x1,pre_y1] + puzzle_map[pre_x2,pre_y2]
 
-    return plaintext
+    return plaintext.lower()
 
 
 # vernam
@@ -110,8 +110,8 @@ def Vernam_decrypt(Key,Ciphertext):
     #     # plaintext += chr(((ord(ciphertext[i]-97)^(ord(key[i]-97))+97)
 
     # return plaintext.lower()
-    plaintext = key[lenth:].lower()
-    return plaintext
+    plaintext = key[lenth:]
+    return plaintext.lower()
 
 #row transposition
 
