@@ -105,11 +105,6 @@ def Vernam_decrypt(Key,Ciphertext):
         key += chr( ((ord(ciphertext[i])-95)^(ord(key[i])-97)) +97)
 
 
-    # for i in range(len(ciphertext)):
-    #     plaintext += chr( ((ord(ciphertext[i])-97)^(ord(key[i])-97)) +97)
-    #     # plaintext += chr(((ord(ciphertext[i]-97)^(ord(key[i]-97))+97)
-
-    # return plaintext.lower()
     plaintext = key[lenth:]
     return plaintext.lower()
 
@@ -155,8 +150,7 @@ def Row_decrypt(Key,Ciphertext):
         except:      
             pass
 
-    # return plaintext.lower()
-    return plaintext
+    return plaintext.lower()
 
 
 
@@ -212,5 +206,3 @@ if Method == 'playfair': print(Playfair_decrypt(Key,Ciphertext))
 if Method == 'vernam': print(Vernam_decrypt(Key,Ciphertext))
 if Method == 'row': print(Row_decrypt(Key,Ciphertext))
 if Method == 'rail_fence': print(RailFence_decrypt(Key,Ciphertext))
-
-print("test merge and branch")
