@@ -57,7 +57,8 @@ int main(int argc, char *argv[]){  // form = {cipher} {key} {plaintext}
             cout << cipherText[i];
         }
     }else if(strcmp(argv[1], "rail_fence")== 0){
-        rail_fence(strlwr(argv[3]), argv[2]);
+        rail_fence(strlwr(argv[3]), 
+        argv[2]);
         for(int i =0; i <= strlen(argv[3])-1; i++){
             cout << cipherText[i];
         }
@@ -81,6 +82,9 @@ void playfair(char *plainText, char *key){
     head=(charList*)malloc(sizeof(charList));   //empty head
     head->next=NULL;
     current=head;
+    if(strlen(plainText)%2 != 0){
+        strcat(plainText, "x");
+    }
     for(int i=0; i<= 25; i++){
         //add all of the character a-i k-z, skip j=9
         if(i == 9){
@@ -199,7 +203,7 @@ void row(char *plainText, char *key){
 }
 
 void rail_fence(char *plainText, char *key){
-    int depth=key[0]-48;       //the depth of rail fence
+    /* int depth=key[0]-48;       //the depth of rail fence
     int distance[depth];    //the distance between adjacent number
     for(int i=0; i<=depth-1; i++){
         if(i == depth-1) distance[i]=distance[0];  //the distance of the last level is the same as the first
@@ -212,6 +216,28 @@ void rail_fence(char *plainText, char *key){
             cipherText[k]=plainText[distance[i]*j+i];
             j++;
             k++;
+        }
+    } */
+    int depth=atoi(key);
+    char cipherMap[100][100];
+    int i=0;    //index for row
+    while(i <= strlen(plainText)-1){
+        for(int j=0; j<depth-1; j++){
+            cipherMap[j][i]=plainText[i];
+            i++;
+        }
+        for(int k=depth-1; k>0; k--){
+            cipherMap[k][i]=plainText[i];
+            i++;
+        }
+    }
+    int k=0;    //index for cipherText
+    for(int i=0; i<=depth-1; i++){
+        for(int j=0; j<=strlen(plainText)-1; j++){
+            if((cipherMap[i][j]-97) >= 0){
+                cipherText[k]=cipherMap[i][j];
+                k++;
+            }
         }
     }
     strupr(cipherText);
