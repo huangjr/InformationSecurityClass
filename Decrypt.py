@@ -155,8 +155,9 @@ def Row_decrypt(Key,Ciphertext):
         except:      
             pass
 
- 
-    return plaintext.lower()
+    plaintext = plaintext.lower()
+    # return plaintext.lower()
+    return plaintext
 
 
 
@@ -212,4 +213,3 @@ if Method == 'playfair': print(Playfair_decrypt(Key,Ciphertext))
 if Method == 'vernam': print(Vernam_decrypt(Key,Ciphertext))
 if Method == 'row': print(Row_decrypt(Key,Ciphertext))
 if Method == 'rail_fence': print(RailFence_decrypt(Key,Ciphertext))
-
