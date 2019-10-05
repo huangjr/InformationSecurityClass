@@ -41,7 +41,7 @@ def Playfair_decrypt(Key,Ciphertext):
             new_order.append(l)
 
     puzzle_map = {}    
-    #  x is row列 and y is column行
+
     for x in range(1,6):
         for y in range(1,6):
             puzzle_map[x,y] = new_order[5*(x - 1) + y - 1]
@@ -53,14 +53,10 @@ def Playfair_decrypt(Key,Ciphertext):
         if len(new_ciphertext) % 2 == 0:
             new_ciphertext.append(char)
         else:
-            if char == new_ciphertext[-1]: 
+            if new_ciphertext[-1] == char: 
                 if char != 'X': new_ciphertext.append('X') 
                 else: new_ciphertext.append('Q')
             new_ciphertext.append(char)
-
-    if len(new_ciphertext) % 2 == 1: new_ciphertext.append('X')
-        # if new_ciphertext[-1] != 'X': new_ciphertext.append('X')
-        # else: new_ciphertext.append('Q')
 
     reverse_puzzle = {k: v for v,k in puzzle_map.items()}
 
