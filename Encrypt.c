@@ -219,15 +219,29 @@ void rail_fence(char *plainText, char *key){
         }
     } */
     int depth=atoi(key);
-    char cipherMap[100][100];
+    char cipherMap[10][100];
+    //empty the map
+    for(int i=0; i<=9; i++){
+        for(int j=0; j<=99; j++){
+            cipherMap[i][j]=0;
+        }
+    }
     int i=0;    //index for row
     while(i <= strlen(plainText)-1){
-        for(int j=0; j<depth-1; j++){
-            cipherMap[j][i]=plainText[i];
+        for(int j=0; j<(depth-1); j++){
+            if(i <= strlen(plainText)-1){
+                cipherMap[j][i]=plainText[i];
+            }else{
+                cipherMap[j][i]='0';  // in the case some shit would insert
+            }
             i++;
         }
-        for(int k=depth-1; k>0; k--){
-            cipherMap[k][i]=plainText[i];
+        for(int k=(depth-1); k>0; k--){
+            if(i <= strlen(plainText)-1){
+                cipherMap[k][i]=plainText[i];
+            }else{
+                cipherMap[k][i]='0';
+            }
             i++;
         }
     }
