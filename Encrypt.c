@@ -1,5 +1,3 @@
-#include <cstdlib>
-#include <stdlib.h>
 #include <iostream>
 #include <string.h>
 
@@ -203,21 +201,6 @@ void row(char *plainText, char *key){
 }
 
 void rail_fence(char *plainText, char *key){
-    /* int depth=key[0]-48;       //the depth of rail fence
-    int distance[depth];    //the distance between adjacent number
-    for(int i=0; i<=depth-1; i++){
-        if(i == depth-1) distance[i]=distance[0];  //the distance of the last level is the same as the first
-        else distance[i]=(depth-1-i)*2;
-    }
-    int k=0;    //index for output
-    for(int i=0; i<=depth-1; i++){
-        int j=0;
-        while(distance[i]*j+i <= strlen(plainText)-1){
-            cipherText[k]=plainText[distance[i]*j+i];
-            j++;
-            k++;
-        }
-    } */
     int depth=atoi(key);
     char cipherMap[10][100];
     //empty the map
