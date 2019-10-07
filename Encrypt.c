@@ -189,7 +189,7 @@ void row(char *plainText, char *key){
             }
         }
     }
-    //fill the ciphertext map
+    //fill the ciphertext
     int k=0;
     for(int i=0; i<=7; i++){
         for(int j=0; j<=(columnMap[rowMap[i]]-1); j++){
