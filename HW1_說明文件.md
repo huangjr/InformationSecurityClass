@@ -13,6 +13,7 @@ MacOS Sierra 10.12.6.  Python 3
 
 ### 1. Caesar cipher    
 >Input: ITDTZWGJXYFSYMJSQJYLT  
+>key: 5  
 >Output: doyourbestandthenletgo  
 
 tempt儲存原本的位置  
@@ -52,6 +53,7 @@ alphabet 字母對應位置的字典
 
 ### 2. Playfair cipher   
 >Input: IDWPQSDFTUGUQLGKKFUFMW  
+>key: COMP  
 >Output: doyourbestandthenletgo  
 
 將key與abc...z串在一起，並將i取代為j，因為等等放入5*5的puzzle_map時，i與j共用一個位置  
@@ -132,6 +134,7 @@ key是字母, value是對應的位置x,y
 ```
 ### 3. Vernam cipher   
 >Input: OIYLYHNOBQC~_FH}K_}LI  
+>key: TEC  
 >Output: doyourbestandthenletgo  
 
 因為key只有一小段，後面要接原來的plaintext內容，只好先key的第一個字與ciphertext的第一個字XOR算出字母再加回key後面，也就是plaintext的第一個字，
@@ -154,6 +157,7 @@ ASCII無法顯示，因此與partner討論過後改成換算時用95
 
 ### 4. Row cipher   
 >Input: ONGUTOYATRHOTEDSLBEEN  
+>key: 45362178  
 >Output: doyourbestandthenletgo  
 
 result拿來裝分割好的ciphertext（幾個字是一個column來的，同一個column來的放一起），split_numbers用來裝每一個column應該要有幾個字，
@@ -219,6 +223,7 @@ result拿來裝分割好的ciphertext（幾個字是一個column來的，同一�
 
 ### 5. Rail fence cipher   
 >Input: DYUBSATELTOOORETNHNEG  
+>key: 2  
 >Output: doyourbestandthenletgo  
 
 先將puzzle陣列建好，共有key個row，ciphertext長度個的column，num用來儲存重複的數字，拿來記錄每一個字的row位置，例如有key為3
