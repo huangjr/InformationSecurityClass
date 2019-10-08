@@ -12,7 +12,7 @@ MacOS Sierra 10.12.6.  Python 3
 ## Decrypt 程式說明
 
 ### 1. Caesar cipher    
->Input: ITDTZWGJXYFSYMJSQJYLT  
+>Input: ITDTZWGJXYFSIYMJSQJYLT  
 >Key: 5  
 >Output: doyourbestandthenletgo  
 
@@ -52,7 +52,7 @@ alphabet 字母對應位置的字典
    ```
 
 ### 2. Playfair cipher   
->Input: IDWPQSDFTUGUQLGKKFUFMW  
+>Input: IDWPQSDFTUGUFRKBHNFSDA  
 >Key: COMP  
 >Output: doyourbestandthenletgo  
 
@@ -133,7 +133,7 @@ key是字母, value是對應的位置x,y
     return plaintext.lower()
 ```
 ### 3. Vernam cipher   
->Input: OIYLYHNOBQC~_FH}K_}LI  
+>Input: OIYLYHNOBQC~ORIF}K_}LI  
 >Key: TEC  
 >Output: doyourbestandthenletgo  
 
@@ -156,7 +156,7 @@ ASCII無法顯示，因此與partner討論過後改成換算時用95
 ```
 
 ### 4. Row cipher   
->Input: ONGUTOYATRHOTEDSLBEEN  
+>Input: ONTUDGYAERTOOTLDSNBHEE  
 >Key: 45362178  
 >Output: doyourbestandthenletgo  
 
@@ -222,7 +222,7 @@ result拿來裝分割好的ciphertext（幾個字是一個column來的，同一�
 ```
 
 ### 5. Rail fence cipher   
->Input: DYUBSATELTOOORETNHNEG  
+>Input: DYUBSADHNEGOORETNTELTO  
 >Key: 2  
 >Output: doyourbestandthenletgo  
 
