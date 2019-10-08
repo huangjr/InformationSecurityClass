@@ -100,7 +100,7 @@ void playfair(char *plainText, char *key){
     }
     //declare cipher map
     char cipherMap[5][5];
-    int l=0;    //the anti-prevent index
+    int l=0;    //the anti-double index
     for(int i=0; i<=4; i++){
         for(int j=0; j<=4; j++){
             if((5*i+j) < strlen(key)-l){
@@ -175,6 +175,7 @@ void row(char *plainText, char *key){
     for(int i=0; i<=7; i++){
         rowMap[i]=key[i]-49;
     }
+    //buildup the access limit of reach column
     for(int i=0; i<=7; i++){
         if(i <= (strlen(plainText)%8-1)) columnMap[i]=n;
         else columnMap[i]=n-1;
@@ -189,7 +190,7 @@ void row(char *plainText, char *key){
             }
         }
     }
-    //fill the ciphertext map
+    //fill the ciphertext
     int k=0;
     for(int i=0; i<=7; i++){
         for(int j=0; j<=(columnMap[rowMap[i]]-1); j++){
