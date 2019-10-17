@@ -1,6 +1,8 @@
 #include <iostream>
 
-char ip[64]={   58, 50, 42, 34, 26, 18, 10, 2,
+typedef unsigned char BYTE; //size = 128 bit
+
+BYTE ip[64]={   58, 50, 42, 34, 26, 18, 10, 2,
                 60, 52, 44, 36, 28, 20, 12, 4,
                 62, 54, 46, 38, 30, 22, 14, 6,
                 64, 56, 48, 40, 32, 24, 16, 8,
@@ -10,7 +12,7 @@ char ip[64]={   58, 50, 42, 34, 26, 18, 10, 2,
                 63, 55, 47, 39, 31, 23, 15, 7
             };
 
-char inverse_ip[64]={   40, 8, 48, 16, 56, 24, 64, 32,
+BYTE inverse_ip[64]={   40, 8, 48, 16, 56, 24, 64, 32,
                         39, 7, 47, 15, 55, 23, 63, 31,
                         38, 6, 46, 14, 54, 22, 62, 30,
                         37, 5, 45, 13, 53, 21, 61, 29,
@@ -21,7 +23,7 @@ char inverse_ip[64]={   40, 8, 48, 16, 56, 24, 64, 32,
                     };
 
 
-char e[48]={    32,  1,  2,  3,  4,  5,
+BYTE e[48]={    32,  1,  2,  3,  4,  5,
                 4,   5,  6,  7,  8,  9,
                 8,   9, 10, 11, 12, 13,
                 12, 13, 14, 15, 16, 17,
@@ -31,7 +33,7 @@ char e[48]={    32,  1,  2,  3,  4,  5,
                 28, 29, 30, 31, 32, 1
             };
 
-char pc_1[56]={     57, 49, 41, 33, 25, 17, 9,
+BYTE pc_1[56]={     57, 49, 41, 33, 25, 17, 9,
                     1,  58, 50, 42, 34, 26, 18,
                     10, 2,  59, 51, 43, 35, 27,
                     19, 11, 3,  60, 52, 44, 36,
@@ -39,9 +41,9 @@ char pc_1[56]={     57, 49, 41, 33, 25, 17, 9,
                     7,  62, 54, 46, 38, 30, 22,
                     14, 6,  61, 53, 45, 37, 29,
                     21, 13, 5,  28, 20, 12, 4
-                };
+                };  //8,16,24,32,40,48,56,64 are not used
 
-char pc_2[48]={ 14, 17, 11, 24,  1,  5,
+BYTE pc_2[48]={ 14, 17, 11, 24,  1,  5,
                 3,  28, 15,  6, 21, 10,
                 23, 19, 12,  4, 26,  8,
                 16,  7, 27, 20, 13,  2,
@@ -49,15 +51,15 @@ char pc_2[48]={ 14, 17, 11, 24,  1,  5,
                 30, 40, 51, 45, 33, 48,
                 44, 49, 39, 56, 34, 53,
                 46, 42, 50, 36, 29, 32 
-            };
+            }; 
 
-char fp[32]={   16,  7, 20, 21, 29, 12, 28, 17,
+BYTE fp[32]={   16,  7, 20, 21, 29, 12, 28, 17,
                  1, 15, 23, 26,  5, 18, 31, 10,
                  2,  8, 24, 14, 32, 27,  3,  9,
                 19, 13, 30,  6, 22, 11,  4,  25
             };
 
-char sbox[8][64]={{ 14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0,  7,
+BYTE sbox[8][64]={{ 14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0,  7,
                      0, 15,  7,  4, 14,  2, 13,  1, 10,  6, 12, 11,  9,  5,  3,  8,
                      4,  1, 14,  8, 13,  6,  2, 11, 15, 12,  9,  7,  3, 10,  5,  0,
                     15, 12,  8,  2,  4,  9,  1,  7,  5, 11,  3, 14, 10,  0,  6, 13
@@ -103,6 +105,94 @@ char sbox[8][64]={{ 14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0, 
                 }
                 };
 
-int main(int argc, int *argv[]){
+BYTE rotateMap[16]={1,2,2,2,2,2,2,1,2,2,2,2,2,1,1,2};  //1,2,9,16 be 1 
+void toBinary(BYTE[], char*);
+int search(BYTE[],BYTE);
+void rotate(BYTE[], BYTE, BYTE); //(key, rotateMap, left or right)
 
+int main(int argc, char *argv[]){
+    BYTE key[64];
+    //store thr transformed key
+    BYTE scheduledKey[16][64];
+    BYTE cipherText[96];    //there would be maximun 48+48 bit
+    BYTE buffer[96];  //used to store temperate permutation data
+    BYTE buffer1[48];   //maximun size is 48, in f-function
+    char *dirtyCipherText=argv[1];
+    char *dirtyKey=argv[2];
+    //translate input from character to binary array
+    //first translate them to lower case
+    strlwr(dirtyCipherText);
+    strlwr(dirtyKey);
+    //translate from ascii to real number
+    //0-9: 48-57, a-z: 97-122
+    toBinary(dirtyKey, key);
+    toBinary(dirtyCipherText, cipherText);
+    //key pc-1
+    for(int i=0; i<=15; i++){
+        for(int j=0; j<=55; j++){
+            buffer[i]=scheduledKey[i][pc_1[j]];
+        }
+        //store working result
+        for(int j=0; j<=55; j++){
+            scheduledKey[i][j]=buffer[i];
+        }
+    }
+    //generate 16 key according to the rotate rule
+    for(int i=0; i<=15; i++){
+        if(i == 0){
+            //put the original key to the first shceduled key
+            for(int j=0; j<=55; j++){
+                scheduledKey[i][j] = key[j];
+            }
+        }else{
+            for(int j=0; j<=55; i++){
+                //put the prvious scheduled key to current scheduled key
+                scheduledKey[i][j] = scheduledKey[i-1][j];
+            }
+        }
+        rotate(scheduledKey[i], rotateMap[i], 0);   //rotate first part
+        rotate(scheduledKey[i], rotateMap[i], 1);   //rotate second part
+    }
+    //pc-2
+    for(int i=0; i<=15; i++){
+        for(int j=0; j<=47; j++){
+            buffer[j]=scheduledKey[i][pc_2[j]];
+        }
+        for(int j=0; j<=47; j++){
+            scheduledKey[i][j]=buffer[j];
+        }
+    }
+    //key preprocess end
+
+    //initial inverse permutation
+    for(int i=0; i<=63; i++){
+        buffer[i]=cipherText[search(inverse_ip, i)];
+    }
+    for(int i=0; i<=63; i++){
+        cipherText[i]=buffer[i];
+    }
+    //do the following same thing for 16 times
+    for(int z=0; z<=15; z++){
+        //following operation are about left part
+        //f-function, we don't need to reverse the f-function
+        //that where magic happened
+        //expansion
+        for(int i=0; i<=47; i++){
+            buffer[i]=cipherText[e[i]];
+        }
+        //apply change to buffer1, which is the buffer for left part
+        for(int i=0; i<=47; i++){
+            buffer1[i]=buffer[i];
+        }
+        //xor with key
+        for(int i=0; i<=47; i++){
+            buffer[i]=buffer1[i]^scheduledKey[z][i];
+        }
+        //left part do reverse f-function
+        //sbox expansion
+        //cipher text would seperate in to 8 part
+        for(int i=0; i<=7; i++){
+            
+        }
+        }
 }
