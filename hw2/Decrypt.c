@@ -53,7 +53,7 @@ BYTE pc_2[48]={ 14, 17, 11, 24,  1,  5,
                 46, 42, 50, 36, 29, 32 
             }; 
 
-BYTE fp[32]={   16,  7, 20, 21, 29, 12, 28, 17,
+BYTE p[32]={   16,  7, 20, 21, 29, 12, 28, 17,
                  1, 15, 23, 26,  5, 18, 31, 10,
                  2,  8, 24, 14, 32, 27,  3,  9,
                 19, 13, 30,  6, 22, 11,  4,  25
@@ -107,8 +107,9 @@ BYTE sbox[8][64]={{ 14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0, 
 
 BYTE rotateMap[16]={1,2,2,2,2,2,2,1,2,2,2,2,2,1,1,2};  //1,2,9,16 be 1 
 void toBinary(BYTE[], char*);
-int search(BYTE[],BYTE);
+int search(BYTE[],int);
 void rotate(BYTE[], BYTE, BYTE); //(key, rotateMap, left or right)
+int pow(BYTE, int);  //input number, power
 
 int main(int argc, char *argv[]){
     BYTE key[64];
@@ -191,8 +192,50 @@ int main(int argc, char *argv[]){
         //left part do reverse f-function
         //sbox expansion
         //cipher text would seperate in to 8 part
+        int position;
         for(int i=0; i<=7; i++){
-            
+            //get the first and last bits
+            int row = pow(buffer1[i*6+5],1)+pow(buffer[i*6],0);
+            //get the mid four bits
+            int column = pow(buffer[i*6+4],3)+pow(buffer[i*6+3],2)+pow(buffer[i*6+2],1)+pow(buffer[i*6+1],0);
+            position = row+column;
+            //translate substitution data to binary and store as result
+            buffer1[i] = sbox[i][position];
         }
+        //permutation
+        for(int i=0; i<=31; i++){
+            buffer[i] = buffer1[p[i]];
         }
+        //store the result
+        for(int i=0; i<=31; i++){
+            buffer1[i] = buffer[i];
+        }
+        //xor left with right
+        for(int i=0; i<= 31; i++){
+            buffer[i] = buffer1[i]^cipherText[32+i];
+        }
+        for(int i=0; i<= 31; i++){
+            buffer1[i] = buffer[i];
+        }
+        //sotre right to left, left to right 
+        for(int i=0; i<= 31; i++){
+            cipherText[i]=cipherText[32+i];
+        }
+        for(int i=0; i<= 31; i++){
+            cipherText[32+i]=buffer1[i];
+        }
+    }
+    //reverse initial permutation
+    for(int i=0; i<=63; i++){
+        buffer[i] = cipherText[search(cipherText, i)];
+    }
+    for(int i=0; i<=63; i++){
+        cipherText[i] = buffer[i];
+    }
+
+    //translate binary to integer
+
+    //integer to character
+
+    //out put result
 }
