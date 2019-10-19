@@ -41,7 +41,6 @@ def Playfair_decrypt(Key,Ciphertext):
             new_order.append(l)
 
     puzzle_map = {}    
-
     for x in range(1,6):
         for y in range(1,6):
             puzzle_map[x,y] = new_order[5*(x - 1) + y - 1]
