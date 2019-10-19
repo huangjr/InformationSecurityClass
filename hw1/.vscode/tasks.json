@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Information Security",
+        "type": "shell",
+        "command": "g++",
+        "args": ["-g", "-o", "Encrypt", "Encrypt.c"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      }
+    ]
+  }
