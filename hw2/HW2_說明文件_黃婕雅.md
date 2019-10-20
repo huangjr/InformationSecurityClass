@@ -9,7 +9,7 @@
 ## 環境
 MacOS Sierra 10.12.6.  Python 3 
 
-## Decrypt 程式說明
+## Encrypt 程式說明
 
 ### hexToBinary(hex)    
 >Input: 'afafafafafafafaf'  
@@ -146,7 +146,7 @@ def encrypt(key, plaintext):
     Ciphertext = Ciphertext_hex.upper()
     return Ciphertext
 ```
-### Command line 
+### Command Line 
 >Input: ./EncryptDES.py afafafafafafafaf abcdef0123456789    
 >Output: 4C30FC30FB2B0BFF  
 
