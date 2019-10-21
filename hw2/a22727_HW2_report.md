@@ -144,11 +144,11 @@ def encrypt(key, plaintext):
     Ciphertext_binary = ''.join(AfterIP_INV)
     Ciphertext_hex = hex(int(Ciphertext_binary,2))[2:]
     Ciphertext = Ciphertext_hex.upper()
-    return Ciphertext
+    return '0x' + Ciphertext
 ```
 ### Command Line 
->Input: ./EncryptDES.py afafafafafafafaf abcdef0123456789    
->Output: 4C30FC30FB2B0BFF  
+>Input: ./EncryptDES.py 0xafafafafafafafaf 0xabcdef0123456789    
+>Output: 0x4C30FC30FB2B0BFF  
 
 進到目錄底下，就可以用command line 輸入執行檔名稱、key、plaintext就可以得到DES加密後的ciphertext     
 
@@ -157,10 +157,10 @@ import sys
 
 Key = sys.argv[1]
 Plaintext = sys.argv[2]
-# Plaintext = 'abcdef0123456789'
-# Key = 'afafafafafafafaf'
+# Plaintext = '0xabcdef0123456789'
+# Key = '0xafafafafafafafaf'
 
-if len(Key) != 16: print('Key\'s length is not 16')
-elif len(Plaintext) != 16: print('Plaintext\'s length is not 16')
-else : print(encrypt(Key,Plaintext))
+if len(Key) != 18: print('Key\'s length is not hex')
+elif len(Plaintext) != 18: print('Plaintext\'s length is not hex')
+else : print(encrypt(Key[2:],Plaintext[2:]))
 ```
