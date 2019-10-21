@@ -104,7 +104,7 @@ int sbox[8][64]={{ 14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0,  
                 }
                 };
 
-int rotateMap[16]={2,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1};  //2,9,16 be 1
+int rotateMap[16]={2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};  //2,9,16 be 1
 int* decToBinary(unsigned long long);   //translate char[] input to byte
 void charToHex(char*, int*);
 int pow(int, int, int);  //prefix number, base, power
@@ -133,9 +133,6 @@ int main(int argc, char *argv[]){
     //translate from long to binary array.
     cipherText = decToBinary(cipherTextLong);
     key = decToBinary(keyLong);
-    //for(int i=0; i<=63; i++) cout<<cipherText[i];
-    //cout << "\n";
-    //for(int i=0; i<=63; i++) cout<<key[i];
     //key pc-1:64 ->56, teacher said DES should readlly has 56 bit lenth key, which make a logic error here
     for(int j=0; j<=55; j++){
         buffer[j]=key[pc_1[j]-1];
@@ -147,10 +144,6 @@ int main(int argc, char *argv[]){
     //the first key need no rotation
     //generate 15 key according to the rotate rule
     for(int i=1; i<=15; i++){
-        for(int j=0; j<=55; j++){
-            //put the prvious scheduled key to current scheduled key
-            scheduledKey[i][j] = scheduledKey[i-1][j];
-        }
         //rotate first part to right
         int x=0;
         for(int j=0; j<=27; j++){
@@ -161,7 +154,7 @@ int main(int argc, char *argv[]){
         //rotate second part to right
         for(int j=28; j<=55; j++){
             x=j-rotateMap[i];
-            if(j<0) j+=28;  //reverse to end
+            if(x<28) x+=28;  //reverse to end
             scheduledKey[i][x]=scheduledKey[i-1][j];
         }
     }
@@ -205,15 +198,14 @@ int main(int argc, char *argv[]){
         for(int i=0; i<=47; i++){
             buffer1[i]=buffer1[i]^scheduledKey[z][i];
         }
-        //left part do reverse f-function
         //sbox expansion
         //cipher text would seperate in to 8 part
         int position;
         for(int i=0; i<=7; i++){
             //get the first and last bits
-            int row = pow(buffer1[i*6+5], 2, 1)+pow(buffer1[i*6], 2, 0)-1;
+            int row = pow(buffer1[i*6+0], 2, 1)+pow(buffer1[i*6+5], 2, 0)-1;
             //get the mid four bits
-            int column = pow(buffer1[i*6+4], 2, 3)+pow(buffer1[i*6+3], 2, 2)+pow(buffer1[i*6+2], 2, 1)+pow(buffer[i*6+1], 2, 0)-1;
+            int column = pow(buffer1[i*6+1], 2, 3)+pow(buffer1[i*6+2], 2, 2)+pow(buffer1[i*6+3], 2, 1)+pow(buffer[i*6+4], 2, 0)-1;
             position = 16*row+column;
             //translate substitution data to binary and store as result
             int *bufferInt = decToBinary(sbox[i][position]);
@@ -255,18 +247,19 @@ int main(int argc, char *argv[]){
     int cipherTextInt_2=0;
     //translate binary to hex array: four binary as one hex, 16 hex are there
     for(int i=0; i<=15; i++){
-        cipherText[i]=  pow(cipherText[4*i+0],2,0)+pow(cipherText[4*i+1],2,1)
-                        +pow(cipherText[4*i+2],2,2)+pow(cipherText[4*i+3],2,3);
-    }
+        cipherText[i]=  pow(cipherText[4*i+0],2,3)+pow(cipherText[4*i+1],2,2)
+                        +pow(cipherText[4*i+2],2,1)+pow(cipherText[4*i+3],2,0);
+        }
     //hex to character
     for(int i=0; i<=15; i++){
-        if(cipherText[i]>=49 && cipherText[i]<=57){   //0-9
-            dirtyCipherText[i]='0'+cipherText[i];
+        if(cipherText[i] <= 9){   //0-9
+            dirtyCipherText[i] = '0'+cipherText[i];
         }else{  //a-z
-            dirtyCipherText[i] = cipherText[i]+'a';
+            dirtyCipherText[i] = 'a'+cipherText[i]-10;
         }
     }
     //output result
+    cout <<"0x";
     for(int i=0; i<=15; i++){
         cout << dirtyCipherText[i];
     }
@@ -293,10 +286,11 @@ int* decToBinary(unsigned long long n){
     return binaryNum;
 };
 
-int pow(int input, int base, int power){  //input number:0 or 1, power base 2
-    if(power =0 )return 1;
-    for (int i = 0; i <= power-1; i++){
-        input = input*base;
+int pow(int prefix, int base, int power){  //input number:0 or 1, power base 2
+    if(power == 0 )return prefix*1;
+
+    for (int i = 0; i <=power-1; i++){
+        prefix = prefix*base;
     }
-    return input;
+    return prefix;
 }; 
