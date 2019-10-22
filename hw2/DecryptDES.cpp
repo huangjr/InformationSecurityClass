@@ -77,19 +77,16 @@ int sbox[8][64]={{ 14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0,  
                     13,  8, 11,  5,  6, 15,  0,  3,  4,  7,  2, 12,  1, 10, 14,  9,
                     10,  6,  9,  0, 12, 11,  7, 13, 15,  1,  3, 14,  5,  2,  8,  4,
                      3, 15,  0,  6, 10,  1, 13,  8,  9,  4,  5, 11, 12,  7,  2, 14
-
                 },
                 {    2, 12,  4,  1,  7, 10, 11,  6,  8,  5,  3, 15, 13,  0, 14,  9,
                     14, 11,  2, 12,  4,  7, 13,  1,  5,  0, 15, 10,  3,  9,  8,  6,
                      4,  2,  1, 11, 10, 13,  7,  8, 15,  9, 12,  5,  6,  3,  0, 14,
                     11,  8, 12,  7,  1, 14,  2, 13,  6, 15,  0,  9, 10,  4,  5,  3,
-
                 },
                 {   12,  1, 10, 15,  9,  2,  6,  8,  0, 13,  3,  4, 14,  7,  5, 11,
                     10, 15,  4,  2,  7, 12,  9,  5,  6,  1, 13, 14,  0, 11,  3,  8,
                      9, 14, 15,  5,  2,  8, 12,  3,  7,  0,  4, 10,  1, 13, 11,  6,
                      4,  3,  2, 12,  9,  5, 15, 10, 11, 14,  1,  7,  6,  0,  8, 13
-
                 },
                 {    4, 11,  2, 14, 15,  0,  8, 13,  3, 12,  9,  7,  5, 10,  6,  1,
                     13,  0, 11,  7,  4,  9,  1, 10, 14,  3,  5, 12,  2, 15,  8,  6,
@@ -100,13 +97,11 @@ int sbox[8][64]={{ 14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0,  
                      1, 15, 13,  8, 10,  3,  7,  4, 12,  5,  6, 11,  0, 14,  9,  2,
                      7, 11,  4,  1,  9, 12, 14,  2,  0,  6, 10, 13, 15,  3,  5,  8,
                      2,  1, 14,  7,  4, 10,  8, 13, 15, 12,  9,  0,  3,  5,  6, 11
-
                 }
                 };
 
-int rotateMap[16]={2, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};  //2,9,16 be 1
-int* decToBinary(unsigned long long);   //translate char[] input to byte
-void charToHex(char*, int*);
+int rotateMap[16]={0, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};  //2,9,16 be 1
+int* decToBinary(unsigned long long);   //translate char[] input to byte, big endian
 int pow(int, int, int);  //prefix number, base, power
 
 using namespace std;
@@ -115,8 +110,8 @@ int main(int argc, char *argv[]){
     int *cipherText = (int*)malloc(sizeof(int)*96);    //there would be maximun 48+48 bit
     //store thr transformed key
     int scheduledKey[16][56];
-    int buffer[96];  //used to store temperate permutation data
-    int buffer1[48];   //maximun size is 48, in f-function
+    int buffer[64];     //used to store temperate permutation data
+    int buffer1[48];    //maximun size is 48, in f-function
     memset(buffer,0,sizeof(buffer));
     memset(buffer1,0,sizeof(buffer1));
     char *dirtyKey=argv[1];
@@ -184,7 +179,7 @@ int main(int argc, char *argv[]){
         //that where magic happened
         //expansion
         memset(buffer, 0, sizeof(buffer));
-        memset(buffer1, 0, sizeof(buffer));
+        memset(buffer1, 0, sizeof(buffer1));
         //for(int i=0; i<=63; i++) cout<<cipherText[i];
         //cout<<"\n";
         for(int i=0; i<=47; i++){
@@ -203,13 +198,13 @@ int main(int argc, char *argv[]){
         int position;
         for(int i=0; i<=7; i++){
             //get the first and last bits
-            int row = pow(buffer1[i*6+0], 2, 1)+pow(buffer1[i*6+5], 2, 0)-1;
+            int row = pow(buffer1[i*6+0], 2, 1)+pow(buffer1[i*6+5], 2, 0);
             //get the mid four bits
-            int column = pow(buffer1[i*6+1], 2, 3)+pow(buffer1[i*6+2], 2, 2)+pow(buffer1[i*6+3], 2, 1)+pow(buffer[i*6+4], 2, 0)-1;
+            int column = pow(buffer1[i*6+1], 2, 3)+pow(buffer1[i*6+2], 2, 2)+pow(buffer1[i*6+3], 2, 1)+pow(buffer[i*6+4], 2, 0);
             position = 16*row+column;
             //translate substitution data to binary and store as result
             int *bufferInt = decToBinary(sbox[i][position]);
-            for(int j=0; j<=3; j++) buffer1[8*i+j]=bufferInt[j];
+            for(int j=0; j<=3; j++) buffer1[4*i+j]=bufferInt[60+j];
         }
         //permutation
         for(int i=0; i<=31; i++){
@@ -235,6 +230,19 @@ int main(int argc, char *argv[]){
             cipherText[i]=buffer1[i];
         }
     }
+    //the last round don't need left-right swapping, so here I swap it back
+    //store left part to buffer
+    for(int i=0; i<= 31; i++){
+        cipherText[i]=buffer[i];
+    }
+    //store right part to left
+    for(int i=0; i<= 31; i++){
+        cipherText[i]=cipherText[i+32];
+    }
+    //store buffered left part to right
+    for(int i=0; i<= 31; i++){
+        cipherText[i+32]=buffer1[i];
+    }
     //reverse initial permutation
     for(int i=0; i<=63; i++){
         buffer[i] = cipherText[inverse_ip[i]-1];
@@ -248,7 +256,7 @@ int main(int argc, char *argv[]){
     //translate binary to hex array: four binary as one hex, 16 hex are there
     for(int i=0; i<=15; i++){
         cipherText[i]=  pow(cipherText[4*i+0],2,3)+pow(cipherText[4*i+1],2,2)
-                        +pow(cipherText[4*i+2],2,1)+pow(cipherText[4*i+3],2,0);
+                       +pow(cipherText[4*i+2],2,1)+pow(cipherText[4*i+3],2,0);
         }
     //hex to character
     for(int i=0; i<=15; i++){
@@ -265,12 +273,6 @@ int main(int argc, char *argv[]){
     }
 }
 
-int toBinary(int input){   //translate decimal integer to binary integer, size limited to 32 bit
-    if(input == 0) return 0;
-    if(input == 1) return 1;
-    return(input%2)+10*toBinary(input/2);
-}; 
-
 int* decToBinary(unsigned long long n){ 
     // array to store binary number 
     int *binaryNum;
@@ -279,7 +281,7 @@ int* decToBinary(unsigned long long n){
     int i = 0;
     while (n > 0 || i<=63) {
         // storing remainder in binary array 
-        binaryNum[i] = n % 2; 
+        binaryNum[63-i] = n % 2; 
         n = n / 2; 
         i++; 
     }
