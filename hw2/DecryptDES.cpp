@@ -144,7 +144,7 @@ int main(int argc, char *argv[]){
         //rotate first part to right
         int x=0;
         for(int j=0; j<=27; j++){
-            //shift to left, so minus
+            //shift to left, so plus
             x=j+rotateMap[i];
             if(x>27) x=x-28;  //reverse to end
             scheduledKey[i][x]=scheduledKey[i-1][j];
@@ -174,22 +174,16 @@ int main(int argc, char *argv[]){
     for(int i=0; i<=63; i++){
         cipherText[i]=buffer[i];
     }
-    ///debug
-    /* for(int i=0; i<=15; i++){
-        cipherText[i]=  pow(cipherText[4*i+0],2,3)+pow(cipherText[4*i+1],2,2)
-                       +pow(cipherText[4*i+2],2,1)+pow(cipherText[4*i+3],2,0);
-        }
-    for(int i=0; i<=15; i++){
-        if(cipherText[i] <= 9){   //0-9
-            dirtyCipherText[i] = '0'+cipherText[i];
-        }else{  //a-z
-            dirtyCipherText[i] = 'a'+cipherText[i]-10;
-        }
+    //replace right to left, left to right
+    for(int i=0; i<=31; i++){
+        buffer[i]=cipherText[i];
     }
-    for(int i=0; i<=15; i++){
-        cout<<dirtyCipherText[i];
+    for(int i=0; i<=31; i++){
+        cipherText[i]=cipherText[i+32];
     }
-    cout<<"\n"; */
+    for(int i=0; i<=31; i++){
+        cipherText[i+32]=buffer[i];
+    }
     //f-function, we don't need to reverse the f-function
     //do the following same thing for 16 times
     for(int z=0; z<=15; z++){
@@ -247,22 +241,6 @@ int main(int argc, char *argv[]){
         for(int i=0; i<= 31; i++){
             cipherText[i]=buffer1[i];
         }
-        //print every round
-        for(int i=0; i<=63; i++)cout << cipherText[i];
-        cout << "\n";
-    }
-    //the last round don't need left-right swapping, so here I swap it back
-    //store left part to buffer
-    for(int i=0; i<= 31; i++){
-        buffer[i]=cipherText[i];
-    }
-    //store right part to left
-    for(int i=0; i<= 31; i++){
-        cipherText[i]=cipherText[i+32];
-    }
-    //store buffered left part to right
-    for(int i=0; i<= 31; i++){
-        cipherText[i+32]=buffer[i];
     }
     //reverse initial permutation
     for(int i=0; i<=63; i++){
@@ -271,8 +249,6 @@ int main(int argc, char *argv[]){
     for(int i=0; i<=63; i++){
         cipherText[i] = buffer[i];
     }
-    for(int i=0; i<=63; i++)cout<<cipherText[i];
-    cout<<"\n";
     //translate binary to hex array: four binary as one hex, 16 hex are there
     for(int i=0; i<=15; i++){
         cipherText[i]=  pow(cipherText[4*i+0],2,3)+pow(cipherText[4*i+1],2,2)
