@@ -126,10 +126,12 @@ def keyShift(c, d, round_number):
     c1 = []
     d1 = []
     if round_number is 1 or round_number is 2 or round_number is 9 or round_number is 16:
+        # print('1 right')
         c1 = c[1:] + c[0:1]
         d1 = d[1:] + d[0:1]
         return c1+d1
     else:
+        # print('2 right') 
         c1 = c[2:] + c[0:2]
         d1 = d[2:] + d[0:2]
         return c1+d1
