@@ -5,7 +5,7 @@ import sys, os
 def data_generator(pixs, number):
     data = []
     for pix in pixs:
-        data.append(pix)        
+        data.append(pix)
         if len(data) == number:
             yield bytes(data)
             data = []
