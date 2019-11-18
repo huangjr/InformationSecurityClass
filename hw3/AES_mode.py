@@ -13,8 +13,7 @@ def data_generator(pixs, number):
             data = []
     # padding
     if len(data) != 0:
-        data.extend([0]*(32 - len(data)))
-        yield bytes(data)
+        yield pad(bytes(''.join( str(x) for x in data), encoding = 'utf-8'), number)
 
 def pad(text, num):
     padding = num - (len(text) % num)
@@ -46,6 +45,10 @@ def prepare(file, text):
         f_ECB.write(bytes(ciphertext))
     f_ECB.close()
 
+    ppmPicture = "./" + file + "_aes_ECB.ppm"
+    im = Image.open(ppmPicture)
+    im.save("./" + file + "_aes_ECB.jpg", 'JPEG')
+
     # for AES_CBC_MODE
     iv = os.urandom(16)
     cipher_CBC = AES.new(pad(key, 16), AES.MODE_CBC, iv) 
@@ -61,9 +64,13 @@ def prepare(file, text):
         try :
             ciphertext = cipher_CBC.encrypt(data)
         except:
-            print(len(data))
+            print(data)
         f_CBC.write(bytes(ciphertext))
     f_CBC.close()
+
+    ppmPicture = "./" + file + "_aes_CBC.ppm"
+    im = Image.open(ppmPicture)
+    im.save("./" + file + "_aes_CBC.jpg" , 'JPEG')
 
 
 if __name__ == "__main__":
@@ -71,7 +78,3 @@ if __name__ == "__main__":
     key = sys.argv[2]
     if os.path.exists('./'+filename) is not True: print('No file, please put the picture file in the directory')
     else: prepare(filename , key)
-
-
-
-# $python Decrypt_AES.py mode key filename initial_value
