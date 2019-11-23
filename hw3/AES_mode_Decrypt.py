@@ -19,31 +19,30 @@ def pad(text, num):
     padding = num - (len(text) % num)
     return text + bytes([padding] * padding)
 
-def CBC_encrypt(text, key, iv):
+def CBC_decrypt(text, key, iv):
     cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB)
-    # xor text with iv
+    # first decrypt
+    pText = cipher_ECB.decrypt(text)
     data = ""
-    for a,b in zip(text, iv):
+    # second xor text with iv
+    for a,b in zip(pText, iv):
+        # make the string in 0x00 form, or some informaiton would lose
         c = format(a^b, '#04x')
-        # make the string:0x00 form, or some informaiton would lose
         data += c[2:]
-    cText = bytes.fromhex(data)
+    pText = bytes.fromhex(data)
     # encrypt text with key in ECB mode
-    cText = cipher_ECB.encrypt(cText)
     # return text for next round's iv
-    return cText
+    return pText
 
 def prepare(file, text):
     key = bytes(text, encoding = "utf8")
-    ppmPicture = "./" + file.split(".")[0] + ".ppm"
-    im = Image.open("./" + file)
-    im.save(ppmPicture)
-    f = open(ppmPicture,'rb').read()
+    f = open("./" + file.split(".")[0] + "_Encrypt_ECB.ppm",'rb').read()
     ppm_type, size, max_color, pixs = f.split(b'\n', 3)
+    
 
     # for AES_ECB_MODE
     cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB) 
-    f_ECB = open("./" + file.split(".")[0] + "_Encrypt_ECB.ppm", "wb")
+    f_ECB = open("./" + file.split(".")[0] + "_Decrypt_ECB.ppm", "wb")
     f_ECB.write(ppm_type)
     f_ECB.write(b'\n')
     f_ECB.write(size)
@@ -53,21 +52,23 @@ def prepare(file, text):
     
     for data in data_generator(pixs, 16):
         try:
-            ciphertext = cipher_ECB.encrypt(data)
+            ciphertext = cipher_ECB.decrypt(data)   # only change to decrypt
             f_ECB.write(bytes(ciphertext))
         except:
             print(data)
     f_ECB.close()
 
-    ppmPicture = "./" + file.split(".")[0] + "_Encrypt_ECB.ppm"
+    ppmPicture = "./" + file.split(".")[0] + "_Decrypt_ECB.ppm"
     im = Image.open(ppmPicture)
-    im.save("./" + file.split(".")[0] + "_Encrypt_ECB.jpg", 'JPEG')
+    im.save("./" + file.split(".")[0] + "_Decrypt_ECB.jpg", 'JPEG')
 
     # for AES_CBC_MODE
+    f = open("./" + file.split(".")[0] + "_Encrypt_CBC.ppm",'rb').read()
+    ppm_type, size, max_color, pixs = f.split(b'\n', 3)
     # iv should be explicit defined
     iv = b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f'
     # cipher_CBC = AES.new(pad(key, 16), AES.MODE_CBC, iv) # here should use ECB mode, iv=key?
-    f_CBC = open("./" + file.split(".")[0] + "_Encrypt_CBC.ppm", "wb")
+    f_CBC = open("./" + file.split(".")[0] + "_Decrypt_CBC.ppm", "wb")
     f_CBC.write(ppm_type)
     f_CBC.write(b'\n')
     f_CBC.write(size)
@@ -77,16 +78,16 @@ def prepare(file, text):
 
     for data in data_generator(pixs, 16): 
         try :
-            ciphertext = CBC_encrypt(data, key, iv)
-            iv = ciphertext
-            f_CBC.write(bytes(ciphertext))
+            plaintext = CBC_decrypt(data, key, iv)
+            iv = data
+            f_CBC.write(bytes(plaintext))
         except:
             print(data)
     f_CBC.close()
 
-    ppmPicture = "./" + file.split(".")[0] + "_Encrypt_CBC.ppm"
+    ppmPicture = "./" + file.split(".")[0] + "_Decrypt_CBC.ppm"
     im = Image.open(ppmPicture)
-    im.save("./" + file.split(".")[0] + "_Encrypt_CBC.jpg" , 'JPEG')
+    im.save("./" + file.split(".")[0] + "_Decrypt_CBC.jpg" , 'JPEG')
 
 
 if __name__ == "__main__":
