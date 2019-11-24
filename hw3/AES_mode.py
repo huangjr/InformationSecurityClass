@@ -54,9 +54,9 @@ def prepare(file, text):
     for data in data_generator(pixs, 16):
         try:
             ciphertext = cipher_ECB.encrypt(data)
-            f_ECB.write(bytes(ciphertext))
         except:
             print(data)
+        f_ECB.write(bytes(ciphertext))
     f_ECB.close()
 
     ppmPicture = "./" + file.split(".")[0] + "_Encrypt_ECB.ppm"
@@ -79,9 +79,9 @@ def prepare(file, text):
         try :
             ciphertext = CBC_encrypt(data, key, iv)
             iv = ciphertext
-            f_CBC.write(bytes(ciphertext))
         except:
             print(data)
+        f_CBC.write(bytes(ciphertext))
     f_CBC.close()
 
     ppmPicture = "./" + file.split(".")[0] + "_Encrypt_CBC.ppm"
