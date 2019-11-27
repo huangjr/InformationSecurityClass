@@ -4,7 +4,7 @@ def iv(blockList):
     test docstring:
     >>> blocks = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
     >>> iv(blocks)
-    [1, 2, 0, 7, 1, 2, 4, 11, 1, 2, 8, 15, 9, 10, 12, 19, 1, 2]
+    [1, 2, 0, 7, 1, 2, 4, 11, 1, 2, 8, 15, 9, 10, 12, 19, 1, 3]
     '''
     image=[]
     # iv is a two dimensional array, when every a layer has two element, element inside would be xor
@@ -62,5 +62,5 @@ class BubbleStack:
         self.stack[index] = value
 
 if __name__ == "__main__":
-    import doctest, math, bubleStack
-    doctest.testmod(tree)
+    import doctest, math, bubbleStack
+    doctest.testmod(bubbleStack)
