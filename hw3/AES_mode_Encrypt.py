@@ -43,6 +43,17 @@ def XOR(text, iv):
     cText = bytes.fromhex(data)
     return cText
 
+def DIY_encrypt(text, key, iv):
+    a = text.hex()[:len(text.hex())//2]
+    b = text.hex()[len(text.hex())//2:]
+    cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB)
+    a_c = cipher_ECB.encrypt(bytes.fromhex(a))
+    b_c = cipher_ECB.encrypt(bytes.fromhex(b))
+    a_cipher = XOR(a_c, iv)
+    b_cipher = XOR(b_c, iv)
+    new_iv = XOR(a_cipher, b_cipher)
+    return a_cipher + b_cipher, new_iv
+
 def prepare(file, text):
     key = bytes(text, encoding = "utf8")
     ppmPicture = "./" + file.split(".")[0] + ".ppm"
@@ -125,17 +136,6 @@ def prepare(file, text):
     ppmPicture = "./" + file.split(".")[0] + "_Encrypt_DIY.ppm"
     im = Image.open(ppmPicture)
     im.save("./" + file.split(".")[0] + "_Encrypt_DIY.jpg" , 'JPEG')
-
-def DIY_encrypt(text, key, iv):
-    a = text.hex()[:len(text.hex())//2]
-    b = text.hex()[len(text.hex())//2:]
-    cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB)
-    a_c = cipher_ECB.encrypt(bytes.fromhex(a))
-    b_c = cipher_ECB.encrypt(bytes.fromhex(b))
-    a_cipher = XOR(a_c, iv)
-    b_cipher = XOR(b_c, iv)
-    new_iv = XOR(a_cipher, b_cipher)
-    return a_cipher + b_cipher, new_iv
 
 
 if __name__ == "__main__":
