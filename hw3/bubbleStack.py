@@ -62,5 +62,5 @@ class BubbleStack:
         self.stack[index] = value
 
 if __name__ == "__main__":
-    import doctest, math, tree
+    import doctest, math, bubleStack
     doctest.testmod(tree)
