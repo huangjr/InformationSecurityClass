@@ -33,26 +33,26 @@ def CBC_encrypt(text, key, iv):
     # return text for next round's iv
     return cText
 
-def XOR(text, iv):
+def XOR(a, b):
     # text_h = text.hex()
     # iv_h = iv.hex()
     data = ""
-    for a,b in zip(text, iv):
-        c = format(a^b, '#04x')
+    for a1,b1 in zip(a, b):
+        c = format(a1^b1, '#04x')
         data += c[2:]
     cText = bytes.fromhex(data)
     return cText
     
 def DIY_encrypt(text, key, iv):
-    a = text.hex()[:8]
-    b = text.hex()[8:]
+    a = text[:8]
+    b = text[8:]
     cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB)
-    a_c = cipher_ECB.encrypt(bytes.fromhex(a))
-    b_c = cipher_ECB.encrypt(bytes.fromhex(b))
-    a_cipher = XOR(a_c, iv)
-    b_cipher = XOR(b_c, iv)
-    new_iv = XOR(a_cipher, b_cipher)
-    return a_cipher + b_cipher, new_iv
+    a = cipher_ECB.encrypt(a)
+    b = cipher_ECB.encrypt(b)
+    a = XOR(a, iv)
+    b = XOR(b, iv)
+    new_iv = XOR(a, b)
+    return a + b, new_iv
 
 def prepare(file, text):
     key = bytes(text, encoding = "utf8")
