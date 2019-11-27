@@ -31,6 +31,9 @@ class BubbleStack:
     int pop():  get a value from the stack
     '''
     def push(self,data):
+        '''
+        push the iv into stack
+        '''
         j=0
         new = data
         while(self.__get(j) != None):
@@ -40,6 +43,9 @@ class BubbleStack:
         self.__clear(j)
 
     def pop(self):
+        '''
+        get the first value of stack
+        '''
         j=0
         while(self.__get(j) == None):
             j+=1

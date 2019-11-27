@@ -24,7 +24,10 @@ def data_generator_2(pixs, number):     # return a pair of blocks
     for block in data_generator(pixs, number):
         if(len(segment)<2):
             segment.append(block)
-    yield segment
+        else: 
+            yield segment
+            segment = []
+    
 
 def pad(text, num):
     padding = num - (len(text) % num)
@@ -131,17 +134,18 @@ def prepare(file, text):
     for data_couple in data_generator_2(pixs, 16):
         try :
             #xor togather
+            print(data_couple)
             next_iv = xor(data_couple[0], data_couple[1])
             #store into stack
             stack.push(next_iv)
             #xor with iv
-            data_couple[0] = xor(data_couple[0], iv)
-            data_couple[1] = xor(data_couple[1], iv)
+            p1 = xor(data_couple[0], iv)
+            p2 = xor(data_couple[1], iv)
             #decrypt with AES
-            plaintext = cipher_ECB.decrypt(data[0]) + cipher_ECB.decrypt(data[1])
+            plaintext = cipher_ECB.decrypt(p1) + cipher_ECB.decrypt(p2)
             iv = stack.pop()
         except:
-            print(data)
+            print(data,)
         f_CBC.write(bytes(plaintext))
     f_CBC.close()
 
