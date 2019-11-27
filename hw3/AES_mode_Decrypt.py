@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-
 from Crypto.Cipher import AES
 from PIL import Image
-import sys, os, bubbleStack, math
-
+import AES_mode_Decrypt, doctest, bubbleStack, math, os, sys
 def data_generator(pixs, number):
     data = []
     for pix in pixs:
@@ -126,8 +124,9 @@ def prepare(file, text):
     f_CBC.write(b'\n')
     f_CBC.write(max_color)
     f_CBC.write(b'\n')
+
     # stack for store iv, and generate iv
-    stack = BubbleStack(int(math.log(int(len(pixs)/16), 2)))
+    stack = bubbleStack.BubbleStack(int(math.log(int(len(pixs)/16), 2)))
 
     for data_couple in data_generator_2(pixs, 16):
         try :
@@ -155,7 +154,6 @@ def prepare(file, text):
 if __name__ == "__main__":
     filename = sys.argv[1]
     key = sys.argv[2]
-    import AES_mode_Decrypt, doctest, bubbleStack
-    doctest.testmod(AES_mode_Decrypt)
+    # doctest.testmod(AES_mode_Decrypt)
     if os.path.exists('./'+filename) is not True: print('No file, please put the picture file in the directory')
     else: prepare(filename , key)
