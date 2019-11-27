@@ -2,7 +2,7 @@
 
 from Crypto.Cipher import AES
 from PIL import Image
-import sys, os
+import sys, os, bubleStack
 
 def data_generator(pixs, number):
     data = []
@@ -87,6 +87,32 @@ def prepare(file, text):
     ppmPicture = "./" + file.split(".")[0] + "_Encrypt_CBC.ppm"
     im = Image.open(ppmPicture)
     im.save("./" + file.split(".")[0] + "_Encrypt_CBC.jpg" , 'JPEG')
+
+    # for AES_DIY_MODE
+    # iv should be explicit defined
+    iv = b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f'
+    # cipher_CBC = AES.new(pad(key, 16), AES.MODE_CBC, iv) # here should use ECB mode, iv=key?
+    f_CBC = open("./" + file.split(".")[0] + "_Encrypt_CBC.ppm", "wb")
+    f_CBC.write(ppm_type)
+    f_CBC.write(b'\n')
+    f_CBC.write(size)
+    f_CBC.write(b'\n')
+    f_CBC.write(max_color)
+    f_CBC.write(b'\n')
+
+    for data in data_generator(pixs, 16): 
+        try :
+            ciphertext = CBC_encrypt(data, key, iv)
+            iv = ciphertext
+        except:
+            print(data)
+        f_CBC.write(bytes(ciphertext))
+    f_CBC.close()
+
+    ppmPicture = "./" + file.split(".")[0] + "_Encrypt_CBC.ppm"
+    im = Image.open(ppmPicture)
+    im.save("./" + file.split(".")[0] + "_Encrypt_CBC.jpg" , 'JPEG')
+
 
 
 if __name__ == "__main__":
