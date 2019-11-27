@@ -2,7 +2,7 @@
 
 from Crypto.Cipher import AES
 from PIL import Image
-import sys, os
+import sys, os, bubbleStack
 
 def data_generator(pixs, number):
     data = []
@@ -15,9 +15,35 @@ def data_generator(pixs, number):
     if len(data) != 0:
         yield pad(bytes(''.join( str(x) for x in data), encoding = 'utf-8'), number)
 
+def data_generator_2(pixs, number):     # return a pair of blocks
+    '''
+    # test docstring
+    >>> image = b'a;lskdjfoiaefkddsfdssfks'
+    >>> data_generator_2(image, 8)
+    [b'a;lskdjf',b'oiaefkdd']
+    '''
+    segment = []
+    for block in data_generator(pixs, number):
+        if(len(segment)<2):
+            segment.append(block)
+    yield segment
+
 def pad(text, num):
     padding = num - (len(text) % num)
     return text + bytes([padding] * padding)
+
+def xor(a,b):
+    '''
+    xor function for bytes operation, a,b should both be bytes type
+    '''
+    data = ""
+    # second xor text with iv
+    for a1,b1 in zip(a, b):
+    # make the string in 0x00 form, or some informaiton would lose
+        c = format(a1^b1, '#04x')
+        data += c[2:]
+    pText = bytes.fromhex(data)
+    return pText
 
 def CBC_decrypt(text, key, iv):
     cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB)
@@ -67,7 +93,6 @@ def prepare(file, text):
     ppm_type, size, max_color, pixs = f.split(b'\n', 3)
     # iv should be explicit defined
     iv = b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f'
-    # cipher_CBC = AES.new(pad(key, 16), AES.MODE_CBC, iv) # here should use ECB mode, iv=key?
     f_CBC = open("./" + file.split(".")[0] + "_Decrypt_CBC.ppm", "wb")
     f_CBC.write(ppm_type)
     f_CBC.write(b'\n')
@@ -89,9 +114,47 @@ def prepare(file, text):
     im = Image.open(ppmPicture)
     im.save("./" + file.split(".")[0] + "_Decrypt_CBC.jpg" , 'JPEG')
 
+    # for AES_DIY_MODE
+    f = open("./" + file.split(".")[0] + "_Encrypt_DIY.ppm",'rb').read()
+    ppm_type, size, max_color, pixs = f.split(b'\n', 3)
+    # iv should be explicit defined
+    iv = b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f'
+    f_CBC = open("./" + file.split(".")[0] + "_Decrypt_DIY.ppm", "wb")
+    f_CBC.write(ppm_type)
+    f_CBC.write(b'\n')
+    f_CBC.write(size)
+    f_CBC.write(b'\n')
+    f_CBC.write(max_color)
+    f_CBC.write(b'\n')
+    # stack for store iv, and generate iv
+    stack = bubbleStack(int(math.log(int(len(pixs)/16), 2)))
+
+    for data_couple in data_generator_2(pixs, 16):
+        try :
+            #xor togather
+            next_iv = xor(data_couple[0], data_couple[1])
+            #store into stack
+            stack.push(next_iv)
+            #xor with iv
+            data_couple[0] = xor(data_couple[0], iv)
+            data_couple[1] = xor(data_couple[1], iv)
+            #decrypt with AES
+            plaintext = cipher_ECB.decrypt(data[0]) + cipher_ECB.decrypt(data[1])
+            iv = stack.pop()
+        except:
+            print(data)
+        f_CBC.write(bytes(plaintext))
+    f_CBC.close()
+
+    ppmPicture = "./" + file.split(".")[0] + "_Decrypt_DIY.ppm"
+    im = Image.open(ppmPicture)
+    im.save("./" + file.split(".")[0] + "_Decrypt_DIY.jpg" , 'JPEG')
+
 
 if __name__ == "__main__":
     filename = sys.argv[1]
     key = sys.argv[2]
+    import AES_mode_Decrypt, doctest
+    doctest.testmod(AES_mode_Decrypt)
     if os.path.exists('./'+filename) is not True: print('No file, please put the picture file in the directory')
     else: prepare(filename , key)

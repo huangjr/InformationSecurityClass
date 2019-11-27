@@ -4,7 +4,7 @@ def iv(blockList):
     test docstring:
     >>> blocks = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
     >>> iv(blocks)
-    [1, 2, 0, 7, 1, 2, 4, 11, 1, 2, 8, 15, 9, 10, 12, 19, 1, 3]
+    [1, 2, 0, 7, 1, 2, 4, 11, 1, 2, 8, 15, 9, 10, 12, 19, 1, 2]
     '''
     image=[]
     # iv is a two dimensional array, when every a layer has two element, element inside would be xor
@@ -47,7 +47,16 @@ class BubbleStack:
 
     # private method
     def __merge(self,a,b):
-        return a^b
+        data = ""
+        # second xor text with iv
+        for a1,b1 in zip(a, b):
+            # make the string in 0x00 form, or some informaiton would lose
+            c = format(a1^b1, '#04x')
+            data += c[2:]
+        pText = bytes.fromhex(data)
+        # encrypt text with key in ECB mode
+        # return text for next round's iv
+        return pText
 
     def __clear(self, index):
         j=0
