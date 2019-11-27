@@ -112,7 +112,10 @@ def prepare(file, text):
     for data in data_generator(pixs, 32): 
         try :
             ciphertext, new_iv = DIY_encrypt(data, key, iv)
+            ## if we use iv = ciphertext, then we cannot see the encrypted picture
+            # iv = ciphertext  
             stack.push(new_iv)
+            ## if we use iv = stack.pop(), then we can see the encrypted picture
             iv = stack.pop()
         except:
             print(data,'WRONG')
@@ -133,27 +136,6 @@ def DIY_encrypt(text, key, iv):
     b_cipher = XOR(b_c, iv)
     new_iv = XOR(a_cipher, b_cipher)
     return a_cipher + b_cipher, new_iv
-
-def iv(blockList):
-    '''
-    test docstring:
-    >>> blocks = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
-    >>> iv(blocks)
-    [1, 2, 0, 7, 1, 2, 4, 11, 1, 2, 8, 15, 9, 10, 12, 19, 1, 2]
-    '''
-    # iv is a two dimensional array, when every a layer has two element, element inside would be xor
-    # togather, and then store into one higher layer, the height would be soooo long.
-    stack = BubbleStack(int(math.log(len(blockList), 2)))
-    current_iv = 0
-    for i in range(0,len(blockList)-1,2):
-        a = blockList[i] ^ current_iv
-        b = blockList[i+1] ^ current_iv
-        image.append(a)
-        image.append(b)
-        stack.push(a^b)
-        current_iv = stack.pop()
-    return image
-
 
 
 if __name__ == "__main__":
