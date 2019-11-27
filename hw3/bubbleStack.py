@@ -47,7 +47,16 @@ class BubbleStack:
 
     # private method
     def __merge(self,a,b):
-        return a^b
+        data = ""
+        # second xor text with iv
+        for a1,b1 in zip(a, b):
+            # make the string in 0x00 form, or some informaiton would lose
+            c = format(a1^b1, '#04x')
+            data += c[2:]
+        pText = bytes.fromhex(data)
+        # encrypt text with key in ECB mode
+        # return text for next round's iv
+        return pText
 
     def __clear(self, index):
         j=0
