@@ -40,7 +40,7 @@ def prepare(file, text):
     ppm_type, size, max_color, pixs = f.split(b'\n', 3)
     
 
-    # for AES_ECB_MODE
+    #### for AES_ECB_MODE
     cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB) 
     f_ECB = open("./" + file.split(".")[0] + "_Decrypt_ECB.ppm", "wb")
     f_ECB.write(ppm_type)
@@ -62,7 +62,7 @@ def prepare(file, text):
     im = Image.open(ppmPicture)
     im.save("./" + file.split(".")[0] + "_Decrypt_ECB.jpg", 'JPEG')
 
-    # for AES_CBC_MODE
+    #### for AES_CBC_MODE
     f = open("./" + file.split(".")[0] + "_Encrypt_CBC.ppm",'rb').read()
     ppm_type, size, max_color, pixs = f.split(b'\n', 3)
     # iv should be explicit defined
@@ -88,6 +88,7 @@ def prepare(file, text):
     ppmPicture = "./" + file.split(".")[0] + "_Decrypt_CBC.ppm"
     im = Image.open(ppmPicture)
     im.save("./" + file.split(".")[0] + "_Decrypt_CBC.jpg" , 'JPEG')
+
 
 
 if __name__ == "__main__":
