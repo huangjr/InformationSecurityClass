@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 from Crypto.Cipher import AES
-from PIL import Image, ImageFile
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+from PIL import Image
 import AES_mode_Decrypt, doctest, bubbleStack, math, os, sys
 def data_generator(pixs, number):
     data = []
