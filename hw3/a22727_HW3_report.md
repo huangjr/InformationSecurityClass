@@ -26,9 +26,19 @@ ECB的程式碼寫在prepare的function裡面，如下：
 ```
 這段ECB的程式碼是照著助教的code做修改，padding的方式也是複製助教上次給的程式碼，ECB的製作方式是用import AES，call AES裡面的MODE_ECB，我們開了一個＿Encrypt_ECB.ppm檔，將每一個block也就是16btyes的資料做ECB加密，中間使用data_generator的function將資料每16bytes也就是一個block一個block的方式yield出去作加密，為了方便除錯所以寫在try跟except裡面，若加密成功會再將加密完的block寫入＿Encrypt_ECB.ppm檔，最後全部完成後再將＿Encrypt_ECB.ppm檔轉乘jpg檔。  
 data_generator的function如下：
-
-
-
+```python
+def data_generator(pixs, number):
+    data = []
+    for pix in pixs:
+        data.append(pix) 
+        if len(data) == number:
+            yield bytes(data)   
+            data = []           
+    # padding
+    if len(data) != 0:
+        yield pad(bytes(''.join( str(x) for x in data), encoding = 'utf-8'), number)
+```
+data是暫存規定數量number的list，當他儲存資料到達規定的number就會丟出去，並清空，讀取到最後面的資料有很大的機會是不滿規定的number數量，故用pad的function讓他到達到規定的數量，pad的function是複製助教pad的程式碼，就不放上來了。  
 ## CBC
 CBC的程式碼寫在prepare的function裡面，如下：  
 ```python=
