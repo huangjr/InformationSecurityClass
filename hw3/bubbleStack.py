@@ -60,6 +60,7 @@ class BubbleStack:
             c = format(a1^b1, '#04x')
             data += c[2:]
         pText = bytes.fromhex(data)
+        pText = pText[-5:] + pText[:-5]
         # encrypt text with key in ECB mode
         # return text for next round's iv
         return pText
