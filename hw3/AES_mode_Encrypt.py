@@ -42,17 +42,6 @@ def XOR(a, b):
         data += c[2:]
     cText = bytes.fromhex(data)
     return cText
-    
-# def DIY_encrypt(text, key, iv):
-#     a = text[:8]
-#     b = text[8:]
-#     cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB)
-#     a = cipher_ECB.encrypt(a)
-#     b = cipher_ECB.encrypt(b)
-#     a = XOR(a, iv)
-#     b = XOR(b, iv)
-#     new_iv = XOR(a, b)
-#     return a + b, new_iv
 
 def DIY_encrypt(text, key, iv):
     a = text.hex()[:len(text.hex())//2]
@@ -130,30 +119,30 @@ def prepare(file, text):
     im = Image.open(ppmPicture)
     im.save("./" + file.split(".")[0] + "_Encrypt_ECB.jpg", 'JPEG')
 
-    # #### for AES_CBC_MODE
-    # # iv should be explicit defined
-    # iv = b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f'
-    # # cipher_CBC = AES.new(pad(key, 16), AES.MODE_CBC, iv) # here should use ECB mode, iv=key?
-    # f_CBC = open("./" + file.split(".")[0] + "_Encrypt_CBC.ppm", "wb")
-    # f_CBC.write(ppm_type)
-    # f_CBC.write(b'\n')
-    # f_CBC.write(size)
-    # f_CBC.write(b'\n')
-    # f_CBC.write(max_color)
-    # f_CBC.write(b'\n')
+    #### for AES_CBC_MODE
+    # iv should be explicit defined
+    iv = b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f'
+    # cipher_CBC = AES.new(pad(key, 16), AES.MODE_CBC, iv) # here should use ECB mode, iv=key?
+    f_CBC = open("./" + file.split(".")[0] + "_Encrypt_CBC.ppm", "wb")
+    f_CBC.write(ppm_type)
+    f_CBC.write(b'\n')
+    f_CBC.write(size)
+    f_CBC.write(b'\n')
+    f_CBC.write(max_color)
+    f_CBC.write(b'\n')
 
-    # for data in data_generator(pixs, 16): 
-    #     try :
-    #         ciphertext = CBC_encrypt(data, key, iv)
-    #         iv = ciphertext
-    #     except:
-    #         print(data)
-    #     f_CBC.write(bytes(ciphertext))
-    # f_CBC.close()
+    for data in data_generator(pixs, 16): 
+        try :
+            ciphertext = CBC_encrypt(data, key, iv)
+            iv = ciphertext
+        except:
+            print(data)
+        f_CBC.write(bytes(ciphertext))
+    f_CBC.close()
 
-    # ppmPicture = "./" + file.split(".")[0] + "_Encrypt_CBC.ppm"
-    # im = Image.open(ppmPicture)
-    # im.save("./" + file.split(".")[0] + "_Encrypt_CBC.jpg" , 'JPEG')
+    ppmPicture = "./" + file.split(".")[0] + "_Encrypt_CBC.ppm"
+    im = Image.open(ppmPicture)
+    im.save("./" + file.split(".")[0] + "_Encrypt_CBC.jpg" , 'JPEG')
 
 
 if __name__ == "__main__":
