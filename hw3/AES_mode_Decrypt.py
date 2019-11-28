@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from Crypto.Cipher import AES
-from PIL import Image
+from PIL import Image, ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 import AES_mode_Decrypt, doctest, bubbleStack, math, os, sys
 def data_generator(pixs, number):
     data = []
@@ -22,13 +23,11 @@ def data_generator_2(pixs, number):     # return a pair of blocks
     '''
     segment = []
     for block in data_generator(pixs, number):
-        if(len(segment)<2):
-            segment.append(block)
-        else: 
+        segment.append(block)        
+        if(len(segment)==2):
             yield segment
             segment = []
     
-
 def pad(text, num):
     padding = num - (len(text) % num)
     return text + bytes([padding] * padding)
@@ -134,7 +133,6 @@ def prepare(file, text):
     for data_couple in data_generator_2(pixs, 16):
         try :
             #xor togather
-            print(data_couple)
             next_iv = xor(data_couple[0], data_couple[1])
             #store into stack
             stack.push(next_iv)
@@ -145,7 +143,7 @@ def prepare(file, text):
             plaintext = cipher_ECB.decrypt(p1) + cipher_ECB.decrypt(p2)
             iv = stack.pop()
         except:
-            print(data,)
+            print(data)
         f_CBC.write(bytes(plaintext))
     f_CBC.close()
 
