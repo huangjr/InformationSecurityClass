@@ -1,6 +1,4 @@
 # a22727_HW3_report
-原圖如下：  
-![](https://i.imgur.com/Bvd2YQA.jpg)
 ## ECB
 ECB的程式碼寫在prepare的function裡面，如下：  
 ```python=
@@ -41,6 +39,8 @@ def data_generator(pixs, number):
         yield pad(bytes(''.join( str(x) for x in data), encoding = 'utf-8'), number)
 ```
 data是暫存規定數量number的list，當他儲存資料到達規定的number就會丟出去，並清空，讀取到最後面的資料有很大的機會是不滿規定的number數量，故用pad的function讓他到達到規定的數量，pad的function是複製助教pad的程式碼，就不放上來了。   
+原圖如下：  
+![](https://i.imgur.com/Bvd2YQA.jpg)
 ECB加密過後的圖案如下：  
 ![](https://i.imgur.com/SPKPvIu.jpg)
 
@@ -88,7 +88,7 @@ CBC的程式碼寫在prepare的function裡面，如下：
 ```
 一開始的iv是寫死的，每一個block的資料都丟進CBC_encrypt作加密的動作，把原文跟iv做XOR，做完的東西再去做ECB加密，加密完的資料就是下一輪的iv。下一輪block會再重新call一次CBC_encrypt的function，此時丟進來的iv已經是上一輪加密完的密文，因此每次的iv都會不一樣。
 
-CBC加密過後的圖案如下：  
+CBC加密過後的圖案如下：(原圖與ECB的原圖相同)  
 ![](https://i.imgur.com/SPKPvIu.jpg)
 
   
