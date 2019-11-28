@@ -1,7 +1,7 @@
 # a22727_HW3_report
 ## ECB
 ECB的程式碼寫在prepare的function裡面，如下：  
-```python=
+```python
     #### for AES_ECB_MODE
     cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB) 
     f_ECB = open("./" + file.split(".")[0] + "_Encrypt_ECB.ppm", "wb")
@@ -40,7 +40,7 @@ def data_generator(pixs, number):
 ```
 data是暫存規定數量number的list，當他儲存資料到達規定的number就會丟出去，並清空，讀取到最後面的資料有很大的機會是不滿規定的number數量，故用pad的function讓他到達到規定的數量，pad的function是複製助教pad的程式碼，就不放上來了。   
 原圖如下：  
-![](https://i.imgur.com/Bvd2YQA.jpg)
+![](https://i.imgur.com/Bvd2YQA.jpg)  
 ECB加密過後的圖案如下：  
 ![](https://i.imgur.com/SPKPvIu.jpg)
 
