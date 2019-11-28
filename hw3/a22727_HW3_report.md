@@ -1,8 +1,31 @@
 # a22727_HW3_report
 ## ECB
-all of the blocks encrypted with the same key, think there could be some parallel mechanism to do this in order to get higher performance.
-My partner write the code of ECB.
-這個部份是我的隊友做的,我隊友也做了block generator
+ECB的程式碼如下：  
+```python=
+    #### for AES_ECB_MODE
+    cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB) 
+    f_ECB = open("./" + file.split(".")[0] + "_Encrypt_ECB.ppm", "wb")
+    f_ECB.write(ppm_type)
+    f_ECB.write(b'\n')
+    f_ECB.write(size)
+    f_ECB.write(b'\n')
+    f_ECB.write(max_color)
+    f_ECB.write(b'\n')
+    
+    for data in data_generator(pixs, 16):
+        try:
+            ciphertext = cipher_ECB.encrypt(data)
+        except:
+            print(data)
+        f_ECB.write(bytes(ciphertext))
+    f_ECB.close()
+
+    ppmPicture = "./" + file.split(".")[0] + "_Encrypt_ECB.ppm"
+    im = Image.open(ppmPicture)
+    im.save("./" + file.split(".")[0] + "_Encrypt_ECB.jpg", 'JPEG')
+```
+這段ECB的程式碼是照著助教的code做修改，padding的方式也是複製助教上次給的程式碼，ECB的製作方式是用import AES，call AES裡面的MODE_ECB，我們開了一個＿Encrypt_ECB.ppm檔，將每一個block也就是16btyes的資料做ECB加密，中間使用data_generator的function將資料每16bytes也就是一個block一個block的方式yield出去作加密，再寫入＿Encrypt_ECB.ppm檔，最後寫完後再將＿Encrypt_ECB.ppm檔轉乘jpg檔。
+
 ## CBC
 the cipherText of the previous block cipher become the next block's key.
 I finish this by just modify some line of encryption code, but basically all of the CBC mode encryption is programmed by me.
