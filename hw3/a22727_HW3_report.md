@@ -42,7 +42,7 @@ data是暫存規定數量number的list，當他儲存資料到達規定的number
 原圖如下：  
 ![](https://i.imgur.com/Bvd2YQA.jpg)  
 ECB加密過後的圖案如下：  
-![](https://i.imgur.com/SPKPvIu.jpg)
+![](https://i.imgur.com/xUPlaEh.jpg)
 
 ## CBC
 CBC的程式碼寫在prepare的function裡面，如下：  
