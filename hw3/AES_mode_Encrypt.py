@@ -63,6 +63,8 @@ def DIY_encrypt(text, key, iv):
     a_c = cipher_ECB.encrypt(bytes.fromhex(a))
     b_c = cipher_ECB.encrypt(bytes.fromhex(b))
     a_cipher = XOR(a_c, iv)
+    # in order to ruin the order
+    iv = XOR(bytes([c for t in zip(iv[1::2], iv[::2]) for c in t]),bytes([c for t in zip(text[1::2], text[::2]) for c in t]))
     b_cipher = XOR(b_c, iv)
     new_iv = XOR(a_cipher, b_cipher)
     return a_cipher + b_cipher, new_iv
