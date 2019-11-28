@@ -81,7 +81,7 @@ CBC的程式碼寫在prepare的function裡面，如下：
     return cText
     f_CBC = open("./" + file.split(".")[0] + "_Encrypt_CBC.ppm", "wb")
 ```
-一開始的iv是寫死的，每一個block的資料都丟進CBC_encrypt作加密的動作，把原文跟iv做XOR，做完的東西再去做ECB加密，加密完的資料就是下一輪的iv。
+一開始的iv是寫死的，每一個block的資料都丟進CBC_encrypt作加密的動作，把原文跟iv做XOR，做完的東西再去做ECB加密，加密完的資料就是下一輪的iv。下一輪block會再重新call一次CBC_encrypt的function，此時丟進來的iv已經是上一輪加密完的密文，因此每次的iv都會不一樣。
 
 
   
