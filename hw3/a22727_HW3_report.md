@@ -1,8 +1,13 @@
 # a22727_HW3_report
-##執行方式：
-在iterm的hw3目錄下指令：  
-./檔案.py  圖片   key
+## 執行方式：
+在iterm的hw3目錄下指令：(./檔案.py  圖片   key)  
 > ./AES_mode_Encrypt.py hello_kitty.jpg 111111
+
+## 產生圖片：
+在目錄下會有：  
+hello_kitty_Encrypt_CBC.jpg  
+hello_kitty_Encrypt_DIY.jpg  
+hello_kitty_Encrypt_ECB.jpg  
 
 ## ECB
 ECB的程式碼寫在prepare的function裡面，如下：  
