@@ -46,7 +46,7 @@ ECB加密過後的圖案如下：
 
 ## CBC
 CBC的程式碼寫在prepare的function裡面，如下：  
-```python=
+```python
     #### for AES_CBC_MODE
     # iv should be explicit defined
     iv = b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f'
@@ -73,7 +73,7 @@ CBC的程式碼寫在prepare的function裡面，如下：
     im.save("./" + file.split(".")[0] + "_Encrypt_CBC.jpg" , 'JPEG')
 ```
 這段CBC的程式碼是照著ECB的code做修改，唯一的差別是CBC中間的串流要自己寫，不能call現成的程式碼，所以在try下的程式碼，寫了一個CBC_encrypt的function如下：  
-```python=
+```python
  def CBC_encrypt(text, key, iv):
     cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB)
     data = ""
@@ -94,7 +94,7 @@ CBC加密過後的圖案如下：(原圖與ECB的原圖相同)
   
 ## DIY
 DIY的程式碼寫在prepare的function裡面，如下： 
-```python=
+```python
     #### for AES_DIY_MODE
     iv = b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f'
     f_DIY = open("./" + file.split(".")[0] + "_Encrypt_DIY.ppm", "wb")
@@ -150,10 +150,5 @@ def XOR(a, b):
 ```
 以下是我們iv產生的流程圖
 ![](https://i.imgur.com/nO0ggAc.png)
-
-
-
-
-
-爸
+第一輪的iv一開始也是寫死的，跟CBC相同，如上圖的IV0，藍色的圈圈是我們原圖的資料，每一個藍圈圈都是16bytes，兩個藍圈圈是一個block共32bytes，兩個藍圈圈會丟到上述的DIY_encrypt的function，此時第一輪放進DIY_encryptfunction的iv是IV0，作完DIY_encrypt後產生的new_iv會是上圖的紅圈圈，也就是IV1，也就是第二輪，第3藍圈圈與第4藍圈圈做DIY_encrypt的iv，因為我們儲存新iv的方式是放進一個stack裡面，這個stack是呼叫一個Class叫BubbleStack，程式碼如下，他讓每一輪的iv都是好幾輪的iv做merge，這裡我們的merge其實就是xor，也就是好幾輪的ciphertext的資訊會一路帶到好幾輪後，stack的功能則是他會依照樹的層級，幫忙merge新iv，例如第一輪的block經過DIY_encrypt產生出IV1，第二輪的block經過DIY_encrypt(這輪做DIY_encrypt是用IV1)產生出IV2，此時的IV1與IV2都是第一層，stack會將第一層的IV1及IV2做merge(我們是用xor的方式merge)產生出第三輪的IV3，做第三輪的block時(第5第6藍圈圈)，這輪做DIY_encrypt是用IV3，經過DIY_encrypt後產生出新的iv是IV4，做第四輪時(第7第8藍圈圈)，做DIY_encrypt是用IV4，然後產生出IV5，IV5放進stack時會與IV做
 
