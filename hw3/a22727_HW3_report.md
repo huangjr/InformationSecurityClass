@@ -93,9 +93,67 @@ CBC加密過後的圖案如下：(原圖與ECB的原圖相同)
 
   
 ## DIY
-I aims to invent an protocol that can quickly generate cipherText with parallel execution. Maybe generate the key once and use for all the data in the recent time.
-I came up with a concept that use a tree structure to build the initial value, which is a little complicate and maybe difficult to implement, but it is a start.
-![](https://i.imgur.com/XoHPuDu.png)
-which a tree is created from leaves, the first ciphertext of first two block generate the initail value for 3 and 4 block, and the ciphertext of 3 and 4 xor togather and xor togather with 1 and 2, and do this thing recursively until the last block is encrypt.
-The decryption do the same thing. Decrypt and use iv to get the second initial value, and recursively doing so until the last block.
-The benefit of this algorithm is it provide another layer of diffusion, which all of the block has the information of all previous block.
+DIY的程式碼寫在prepare的function裡面，如下： 
+```python=
+    #### for AES_DIY_MODE
+    iv = b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f'
+    f_DIY = open("./" + file.split(".")[0] + "_Encrypt_DIY.ppm", "wb")
+    f_DIY.write(ppm_type)
+    f_DIY.write(b'\n')
+    f_DIY.write(size)
+    f_DIY.write(b'\n')
+    f_DIY.write(max_color)
+    f_DIY.write(b'\n')
+
+    stack = bubbleStack.BubbleStack(int(math.log(len(pixs)/16, 2)))
+    for data in data_generator(pixs, 32): 
+        try :
+            
+            ciphertext, new_iv = DIY_encrypt(data, key, iv)
+            # iv = ciphertext  
+            stack.push(new_iv)
+            iv = stack.pop()
+            
+        except:
+            print(data,'WRONG')
+        f_DIY.write(bytes(ciphertext))
+    f_DIY.close()
+
+    ppmPicture = "./" + file.split(".")[0] + "_Encrypt_DIY.ppm"
+    im = Image.open(ppmPicture)
+    im.save("./" + file.split(".")[0] + "_Encrypt_DIY.jpg" , 'JPEG')
+```
+這段DIY的程式碼是照著ECB的code做修改，唯一的差別是DIY中間的串流是自己寫的，每次的block不是用之前的16而是用32bytes，所以在try下的程式碼，寫了一個DIY_encrypt的function如下：
+```python
+def DIY_encrypt(text, key, iv):
+    a = text.hex()[:len(text.hex())//2]
+    b = text.hex()[len(text.hex())//2:]
+    cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB)
+    a_c = cipher_ECB.encrypt(bytes.fromhex(a))
+    b_c = cipher_ECB.encrypt(bytes.fromhex(b))
+    a_cipher = XOR(a_c, iv)
+    b_cipher = XOR(b_c, iv)
+    new_iv = XOR(a_cipher, b_cipher)
+    return a_cipher + b_cipher, new_iv
+```
+我們每一個block的加密方式是從原圖中取32bytes，再拆成兩半分別是a,b，a,b各自先做AES的ECB加密，加密的key就跟其他加密法的key都一樣，只是各自加密完後，再各自跟iv做XOR，XOR的function如下圖，因為後面一直用到XOR，所以寫個function呼叫比較快，程式碼也會比較清楚，兩邊與iv作完XOR的兩半各自為a_cipher與b_cipher，這兩半最後會加在一起變成32bytes再傳出去寫進_Encrypt_DIY.ppm檔案裡，變成加密過後的檔案，但是新的iv會是a_cipher與b_cipherXOR下的產物，傳給下一輪的block變成新的iv，把資訊帶給下一輪，有點像是CBC的概念，但是最特別的是他並不是完全複製CBC的概念，因為我們將產生出的iv放進一個BubbleStack裡面，他是一個tree，並不是每一輪的block都是拿到上一輪兩半ciphertextXOR後的新iv，下面會配合圖片詳細敘述。
+```python
+def XOR(a, b):
+    # text_h = text.hex()
+    # iv_h = iv.hex()
+    data = ""
+    for a1,b1 in zip(a, b):
+        c = format(a1^b1, '#04x')
+        data += c[2:]
+    cText = bytes.fromhex(data)
+    return cText
+```
+以下是我們iv產生的流程圖
+![](https://i.imgur.com/nO0ggAc.png)
+
+
+
+
+
+爸
+
