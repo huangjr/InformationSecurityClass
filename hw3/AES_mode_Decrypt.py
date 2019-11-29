@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 from Crypto.Cipher import AES
-from PIL import Image, ImageFile
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+from PIL import Image
 import AES_mode_Decrypt, doctest, bubbleStack, math, os, sys
-from PIL import ImageFile
 def data_generator(pixs, number):
     data = []
     for pix in pixs:
@@ -63,16 +61,11 @@ def CBC_decrypt(text, key, iv):
 
 def prepare(file, text):
     key = bytes(text, encoding = "utf8")
-    ppmPicture = "./" + file.split(".")[0] + ".ppm"
-    im = Image.open("./" + file)
-    im.save(ppmPicture)
-    f = open(ppmPicture,'rb').read()
+    f = open("./" + file.split(".")[0] + "_Encrypt_ECB.ppm",'rb').read()
     ppm_type, size, max_color, pixs = f.split(b'\n', 3)
-    ImageFile.LOAD_TRUNCATED_IMAGES = True
     
 
     #### for AES_ECB_MODE
-    f = open("./" + file.split(".")[0] + "_Encrypt_ECB.ppm",'rb').read()
     cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB) 
     f_ECB = open("./" + file.split(".")[0] + "_Decrypt_ECB.ppm", "wb")
     f_ECB.write(ppm_type)
@@ -94,31 +87,31 @@ def prepare(file, text):
     im = Image.open(ppmPicture)
     im.save("./" + file.split(".")[0] + "_Decrypt_ECB.jpg", 'JPEG')
 
-    # #### for AES_CBC_MODE
-    # f = open("./" + file.split(".")[0] + "_Encrypt_CBC.ppm",'rb').read()
-    # ppm_type, size, max_color, pixs = f.split(b'\n', 3)
-    # # iv should be explicit defined
-    # iv = b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f'
-    # f_CBC = open("./" + file.split(".")[0] + "_Decrypt_CBC.ppm", "wb")
-    # f_CBC.write(ppm_type)
-    # f_CBC.write(b'\n')
-    # f_CBC.write(size)
-    # f_CBC.write(b'\n')
-    # f_CBC.write(max_color)
-    # f_CBC.write(b'\n')
+    #### for AES_CBC_MODE
+    f = open("./" + file.split(".")[0] + "_Encrypt_CBC.ppm",'rb').read()
+    ppm_type, size, max_color, pixs = f.split(b'\n', 3)
+    # iv should be explicit defined
+    iv = b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f'
+    f_CBC = open("./" + file.split(".")[0] + "_Decrypt_CBC.ppm", "wb")
+    f_CBC.write(ppm_type)
+    f_CBC.write(b'\n')
+    f_CBC.write(size)
+    f_CBC.write(b'\n')
+    f_CBC.write(max_color)
+    f_CBC.write(b'\n')
 
-    # for data in data_generator(pixs, 16): 
-    #     try :
-    #         plaintext = CBC_decrypt(data, key, iv)
-    #         iv = data
-    #     except:
-    #         print(data)
-    #     f_CBC.write(bytes(plaintext))
-    # f_CBC.close()
+    for data in data_generator(pixs, 16): 
+        try :
+            plaintext = CBC_decrypt(data, key, iv)
+            iv = data
+        except:
+            print(data)
+        f_CBC.write(bytes(plaintext))
+    f_CBC.close()
 
-    # ppmPicture = "./" + file.split(".")[0] + "_Decrypt_CBC.ppm"
-    # im = Image.open(ppmPicture)
-    # im.save("./" + file.split(".")[0] + "_Decrypt_CBC.jpg" , 'JPEG')
+    ppmPicture = "./" + file.split(".")[0] + "_Decrypt_CBC.ppm"
+    im = Image.open(ppmPicture)
+    im.save("./" + file.split(".")[0] + "_Decrypt_CBC.jpg" , 'JPEG')
 
     # for AES_DIY_MODE
     f = open("./" + file.split(".")[0] + "_Encrypt_DIY.ppm",'rb').read()
@@ -142,8 +135,10 @@ def prepare(file, text):
             next_iv = xor(data_couple[0], data_couple[1])
             #store into stack
             stack.push(next_iv)
+            text = data_couple[0] + data_couple[1]
             #xor with iv
             p1 = xor(data_couple[0], iv)
+            # iv = xor(bytes([c for t in zip(iv[1::2], iv[::2]) for c in t]),bytes([c for t in zip(text[1::2], text[::2]) for c in t]))
             p2 = xor(data_couple[1], iv)
             #decrypt with AES
             plaintext = cipher_ECB.decrypt(p1) + cipher_ECB.decrypt(p2)

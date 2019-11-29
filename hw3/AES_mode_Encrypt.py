@@ -9,8 +9,8 @@ def data_generator(pixs, number):
     for pix in pixs:
         data.append(pix) 
         if len(data) == number:
-            yield bytes(data)   # here would be execute every number time
-            data = []           # clear the buffer
+            yield bytes(data)   
+            data = []           
     # padding
     if len(data) != 0:
         yield pad(bytes(''.join( str(x) for x in data), encoding = 'utf-8'), number)
