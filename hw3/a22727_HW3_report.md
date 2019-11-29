@@ -214,7 +214,7 @@ class BubbleStack:
     def __set(self, index, value):
         self.stack[index] = value
 ```
-我們自製的加密方法實作後發現效果並不是那麼好，如果大片的顏色相似，兩兩一組加密(一樣的key)又跟一樣的iv做XOR寫出來的加密東西會相似，雖然下一輪的IV有加上merge的部分，也就是跟stack裡上一次的iv做merge也就是XOR，並沒有把iv打亂，特別是在大片顏色一樣的地方，在做merge時，可能前組的iv跟下一組iv太類似，再做一次XOR有點會像似還原的狀況，這是我們想出來可能造成加密效果不好的原因。  
+我們自製的加密方法實作後發現效果並不是那麼好，如果大片的顏色相似，兩兩一組加密(一樣的key)又跟一樣的iv做XOR寫出來的加密東西會相似，雖然下一輪的IV有加上merge的部分，也就是跟stack裡上一次的iv做merge也就是XOR，並沒有把iv打亂，特別是在大片顏色一樣的地方，在做merge時，可能前組的iv跟下一組iv太類似，再做一次XOR有點會像似還原的狀況，這是我們想出來可能造成加密效果不好的原因，但是助教說只要加密方法看起來很酷就行，用tree的方式製造iv還滿特別的。 
 DIY加密過後的圖片如下：(原圖與前組相同，都是hello_kitty.jpg)  
 ![](https://i.imgur.com/Sw45OQe.jpg)
 
