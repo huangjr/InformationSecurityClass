@@ -3,6 +3,9 @@ from Crypto.Cipher import AES
 from PIL import Image
 import AES_mode_Decrypt, doctest, bubbleStack, math, os, sys
 def data_generator(pixs, number):
+    '''
+    generate a block wiht length of number from pixs
+    '''
     data = []
     for pix in pixs:
         data.append(pix) 
@@ -15,10 +18,7 @@ def data_generator(pixs, number):
 
 def data_generator_2(pixs, number):     # return a pair of blocks
     '''
-    # test docstring
-    >>> image = b'a;lskdjfoiaefkddsfdssfks'
-    >>> data_generator_2(image, 8)
-    [b'a;lskdjf',b'oiaefkdd']
+    generate a pair of blocks, with length number store in one list, both are type bytes out of pixs
     '''
     segment = []
     for block in data_generator(pixs, number):
@@ -65,7 +65,7 @@ def prepare(file, text):
     ppm_type, size, max_color, pixs = f.split(b'\n', 3)
     
 
-    #### for AES_ECB_MODE
+    # for AES_ECB_MODE
     cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB) 
     f_ECB = open("./" + file.split(".")[0] + "_Decrypt_ECB.ppm", "wb")
     f_ECB.write(ppm_type)
@@ -87,7 +87,7 @@ def prepare(file, text):
     im = Image.open(ppmPicture)
     im.save("./" + file.split(".")[0] + "_Decrypt_ECB.jpg", 'JPEG')
 
-    #### for AES_CBC_MODE
+    # for AES_CBC_MODE
     f = open("./" + file.split(".")[0] + "_Encrypt_CBC.ppm",'rb').read()
     ppm_type, size, max_color, pixs = f.split(b'\n', 3)
     # iv should be explicit defined
@@ -138,7 +138,6 @@ def prepare(file, text):
             text = data_couple[0] + data_couple[1]
             #xor with iv
             p1 = xor(data_couple[0], iv)
-            # iv = xor(bytes([c for t in zip(iv[1::2], iv[::2]) for c in t]),bytes([c for t in zip(text[1::2], text[::2]) for c in t]))
             p2 = xor(data_couple[1], iv)
             #decrypt with AES
             plaintext = cipher_ECB.decrypt(p1) + cipher_ECB.decrypt(p2)
