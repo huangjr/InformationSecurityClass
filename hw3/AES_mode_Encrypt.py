@@ -9,8 +9,8 @@ def data_generator(pixs, number):
     for pix in pixs:
         data.append(pix) 
         if len(data) == number:
-            yield bytes(data)   # here would be execute every number time
-            data = []           # clear the buffer
+            yield bytes(data)   
+            data = []           
     # padding
     if len(data) != 0:
         yield pad(bytes(''.join( str(x) for x in data), encoding = 'utf-8'), number)
@@ -21,21 +21,15 @@ def pad(text, num):
 
 def CBC_encrypt(text, key, iv):
     cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB)
-    # xor text with iv
     data = ""
     for a,b in zip(text, iv):
         c = format(a^b, '#04x')
-        # make the string:0x00 form, or some informaiton would lose
         data += c[2:]
     cText = bytes.fromhex(data)
-    # encrypt text with key in ECB mode
     cText = cipher_ECB.encrypt(cText)
-    # return text for next round's iv
     return cText
 
 def XOR(a, b):
-    # text_h = text.hex()
-    # iv_h = iv.hex()
     data = ""
     for a1,b1 in zip(a, b):
         c = format(a1^b1, '#04x')
@@ -45,15 +39,13 @@ def XOR(a, b):
 
 def DIY_encrypt(text, key, iv):
     a = text.hex()[:len(text.hex())//2]
-    # print(a, 'AAAA')
     b = text.hex()[len(text.hex())//2:]
-    # print(b, 'BBBB')
     cipher_ECB = AES.new(pad(key, 16), AES.MODE_ECB)
     a_c = cipher_ECB.encrypt(bytes.fromhex(a))
     b_c = cipher_ECB.encrypt(bytes.fromhex(b))
     a_cipher = XOR(a_c, iv)
     # in order to ruin the order
-    # iv = XOR(bytes([c for t in zip(iv[1::2], iv[::2]) for c in t]),bytes([c for t in zip(text[1::2], text[::2]) for c in t]))
+    # iv = XOR(bytes([c for t in zip(iv[1::2], iv[::2]) for c in t]), bytes([c for t in zip(text[1::2], text[::2]) for c in t]))
     b_cipher = XOR(b_c, iv)
     new_iv = XOR(a_cipher, b_cipher)
     return a_cipher + b_cipher, new_iv
@@ -81,10 +73,7 @@ def prepare(file, text):
         try :
             
             ciphertext, new_iv = DIY_encrypt(data, key, iv)
-            ## if we use iv = ciphertext, then we cannot see the encrypted picture
-            # iv = ciphertext  
             stack.push(new_iv)
-            ## if we use iv = stack.pop(), then we can see the encrypted picture
             iv = stack.pop()
             
         except:
@@ -120,9 +109,7 @@ def prepare(file, text):
     im.save("./" + file.split(".")[0] + "_Encrypt_ECB.jpg", 'JPEG')
 
     #### for AES_CBC_MODE
-    # iv should be explicit defined
     iv = b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f'
-    # cipher_CBC = AES.new(pad(key, 16), AES.MODE_CBC, iv) # here should use ECB mode, iv=key?
     f_CBC = open("./" + file.split(".")[0] + "_Encrypt_CBC.ppm", "wb")
     f_CBC.write(ppm_type)
     f_CBC.write(b'\n')
