@@ -41,3 +41,12 @@ class QuickRSA:
             if a=='1':
                 y=y*x
         return y
+    def crt_Decrypt(p,q,y,N):
+        '''
+        p and q only know to the one have private key, so we use the information of p and q to shorten the decryption time.
+        '''
+        # transformation: x to xq and xp
+        
+        # modular exponentiation: compute xp^dp mod p, xq^dq mod q
+        
+        # inverse transportation
