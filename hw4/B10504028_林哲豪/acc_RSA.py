@@ -9,18 +9,27 @@ class QuickRSA:
         7 times should this test carried out
         >>> QuickRSA.miller_rabin(48)
         False
-        >>> miller_rabin(47)
-        True
+        >>> QuickRSA.miller_rabin(49)
+        False
         '''
         # transformation to x-1= 2^n x r
         m = x-1
-        while(x%2 != 0):
-            m = int(r/2)
+        k=0
+        while(m%2 != 0):
+            m = int(m/2)
+            k+=1
         # choose a number from x-1, can be random
         a = random.randint(2, x-1)
         # compute b=a^m mod x
         b = (a**m) % x
-        if(b != 1 & b != (x-1))
+        if(b != 1 & b != (x-1)):
+            i=1
+            while(i<k & b!=(x-1)):
+                b=(b**2)%x
+                if b==1: return False
+                i=i+1
+            if(b!=(x-1)): return False
+        return True
 
     def multiply_and_square(x, exponent):
         '''
@@ -46,7 +55,33 @@ class QuickRSA:
         p and q only know to the one have private key, so we use the information of p and q to shorten the decryption time.
         '''
         # transformation: x to xq and xp
-        
+        xq = x%q
+        xp = x%p
         # modular exponentiation: compute xp^dp mod p, xq^dq mod q
         
         # inverse transportation
+    def primality(security_coefficient):
+        '''
+        determine the primality with x time of miller_rabin test
+        '''
+        result=True
+        for a in range(security_coefficient):
+            result=result*QuickRSA.miller_rabin(r)
+        return (result,r)
+
+    def find_prime(number_of_bits, security_coefficient):
+        '''
+        find a prime number that is x bits wide
+        large number_of_bits and security_coefficient result in long execution time
+        '''
+        r=random.getrandbits(number_of_bits)
+        finded= False
+        while not finded:
+            result=primality(security_coefficient)
+            finded=result[0]
+        return result[1]
+
+if __name__ == "__main__":
+    import acc_RSA, doctest
+    doctest.testmod(acc_RSA)
+    # find_prime()
