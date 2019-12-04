@@ -1,7 +1,9 @@
+import acc_RSA
 # function declaration
 def gcd(x, y):
     '''
     compute GCD of x,y
+    but seems like it's useless here
     >>> gcd(100,50)
     50
     '''
@@ -9,15 +11,22 @@ def gcd(x, y):
         x, y = y, x % y 
     return x
 
-def mutiplicative_invert(x, n):
+def multiplicative_inverse(x, n):
     '''
-    find the multiplicative invert of x on the base of n
+    find the multiplicative inverse of x on the base of n:y
+    x*y = 1 mod n, k*n+1=x*y, 
+    >>> multiplicative_inverse(9,10)
+    9
     '''
-    
+    y=1
+    while((x*y)%n != 1): y+=1
+    return y
 
 def key_generation(number_of_bit):
     '''
-    generate a key of number_of_bit
+    generate a key of number_of_bit,return p,q,e,d,n
+    >>> key_generation(20)
+    0
     '''
     # find two large prime:p,q
     # this process can be accelerated with miller rabin primality test.
@@ -33,23 +42,26 @@ def key_generation(number_of_bit):
     # public key was default set to 2*16+1, to provide fase encryption
     e = 2**16+1
     # find d by exd = 1 mod phi(n)
-    d = mutiplicative_invert(e, phi_n)
+    d = multiplicative_inverse(e, phi_n)
     return (p,q,e,d,n)
 
 def encryption(plaintext, e):
-# encryption:
-
-# plaintext**e mod n= ciphertext
-# the exponentiation can be accelerated with multiply and square
+    # encryption:
+    pass
+    # plaintext**e mod n= ciphertext
+    # the exponentiation can be accelerated with multiply and square
 
 def decryption(ciphertext, d):
-# decryption:
-# decryption can be accelerate with CRT, because we have know the p,q
-
-# ciphertext**d mod n= plaintext
-# the exponentiation can be accelerated with multiply and square
-
-# main function
+    # decryption:
+    # decryption can be accelerate with CRT, because we have know the p,q
+    pass
+    # ciphertext**d mod n= plaintext
+    # the exponentiation can be accelerated with multiply and square
+    
 if __name__ == "__main__":
+    '''
+    program entry point
+    '''
     import doctest, RSA, acc_RSA
-    p,q,e,d,n=key_generation()
+    doctest.testmod(RSA)
+    # p,q,e,d,n=key_generation()

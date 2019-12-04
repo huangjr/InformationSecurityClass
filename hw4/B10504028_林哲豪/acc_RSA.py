@@ -1,7 +1,7 @@
 import random
 
 class QuickRSA:
-    def miller_rabin(x):
+    def miller_rabin(self, x):
         '''
         test whether x is a composite or has the probability to be a prime
         return False when x has an composite witness
@@ -31,7 +31,7 @@ class QuickRSA:
             if(b!=(x-1)): return False
         return True
 
-    def multiply_and_square(x, exponent):
+    def multiply_and_square(self, x, exponent):
         '''
         accelerate method of exponent
         public key "e" was default to 2^16+1
@@ -50,7 +50,7 @@ class QuickRSA:
             if a=='1':
                 y=y*x
         return y
-    def crt_Decrypt(p,q,y,N):
+    def crt_Decrypt(self, p,q,y,N):
         '''
         p and q only know to the one have private key, so we use the information of p and q to shorten the decryption time.
         '''
@@ -60,16 +60,16 @@ class QuickRSA:
         # modular exponentiation: compute xp^dp mod p, xq^dq mod q
         
         # inverse transportation
-    def primality(security_coefficient):
+    def primality(self, suspicious, security_coefficient):
         '''
         determine the primality with x time of miller_rabin test
         '''
         result=True
         for a in range(security_coefficient):
-            result=result*QuickRSA.miller_rabin(r)
-        return (result,r)
+            result=result*self.miller_rabin(suspicious)
+        return (result,suspicious)
 
-    def find_prime(number_of_bits, security_coefficient):
+    def find_prime(self, number_of_bits, security_coefficient):
         '''
         find a prime number that is x bits wide
         large number_of_bits and security_coefficient result in long execution time
@@ -77,7 +77,7 @@ class QuickRSA:
         r=random.getrandbits(number_of_bits)
         finded= False
         while not finded:
-            result=primality(security_coefficient)
+            result=self.primality(r, security_coefficient)
             finded=result[0]
         return result[1]
 
