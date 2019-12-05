@@ -9,7 +9,7 @@ class QuickRSA:
         7 times should this test carried out
         >>> QuickRSA.miller_rabin(48)
         False
-        >>> QuickRSA.miller_rabin(49)
+        >>> QuickRSA.miller_rabin(47)
         False
         '''
         # transformation to x-1= 2^n x r
@@ -31,7 +31,7 @@ class QuickRSA:
             if(b!=(x-1)): return False
         return True
 
-    def multiply_and_square(self, x, exponent):
+    def multiply_and_square(self, x, exponent, n):
         '''
         accelerate method of exponent
         public key "e" was default to 2^16+1
@@ -49,17 +49,28 @@ class QuickRSA:
             # mutiply on exponent[i] = 1: y=x*y mod n
             if a=='1':
                 y=y*x
-        return y
-    def crt_Decrypt(self, p,q,y,N):
+        return y%n
+
+    def crt_Decrypt(self, d,p,q,y):
         '''
         p and q only know to the one have private key, so we use the information of p and q to shorten the decryption time.
+        d=private key, p,q=large prime, y=cipherText
         '''
         # transformation: x to xq and xp
-        xq = x%q
-        xp = x%p
-        # modular exponentiation: compute xp^dp mod p, xq^dq mod q
-        
+        n=p*q
+        xp = y%p
+        xq = y%q
+        # modular exponentiation: compute xp^dp mod p, xq^dq mod q, both eqaul N
+        dq = d%(p-1)
+        dp = d%(q-1)
+        yp = (xp**dp)%p
+        yq = (xq**dq)%q
         # inverse transportation
+        cp= self.multiplicative_inverse(q, p)
+        cq= self.multiplicative_inverse(p, q)
+        x = (q*cp*yp+ p*cq*yq)%n
+        return x
+
     def primality(self, suspicious, security_coefficient):
         '''
         determine the primality with x time of miller_rabin test
@@ -82,6 +93,18 @@ class QuickRSA:
             result=self.primality(r, security_coefficient)
             finded=result[0]
         return result[1]
+
+    def multiplicative_inverse(self, x, n):
+        '''
+        find the multiplicative inverse of x on the base of n:y
+        x*y = 1 mod n, k*n+1=x*y, 
+        >>> multiplicative_inverse(9,10)
+        9
+        '''
+        y=1
+        # the most niave solution, choose one by one number
+        while((x*y)%n != 1): y+=1
+        return y
 
 if __name__ == "__main__":
     import acc_RSA, doctest
