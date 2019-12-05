@@ -14,7 +14,7 @@ class QuickRSA:
         '''
         # transformation to x-1= 2^n x r
         m = x-1
-        k=0
+        k = 0
         while(m%2 != 0):
             m = int(m/2)
             k+=1
@@ -74,9 +74,11 @@ class QuickRSA:
         find a prime number that is x bits wide
         large number_of_bits and security_coefficient result in long execution time
         '''
-        r=random.getrandbits(number_of_bits)
-        finded= False
+        finded = False
         while not finded:
+            r=random.getrandbits(number_of_bits)
+            while r%2 != 1:
+                r=random.getrandbits(number_of_bits)
             result=self.primality(r, security_coefficient)
             finded=result[0]
         return result[1]
