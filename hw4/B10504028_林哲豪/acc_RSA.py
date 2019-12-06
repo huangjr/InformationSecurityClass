@@ -7,9 +7,10 @@ class QuickRSA:
         return False when x has an composite witness
         return True when x has no composite witness
         7 times should this test carried out
-        >>> QuickRSA.miller_rabin(48)
+        >>> quickRSA=QuickRSA()
+        >>> quickRSA.miller_rabin(48)
         False
-        >>> QuickRSA.miller_rabin(47)
+        >>> quickRSA.miller_rabin(47)
         False
         '''
         # transformation to x-1= 2^n x r
@@ -35,9 +36,10 @@ class QuickRSA:
         '''
         accelerate method of exponent
         public key "e" was default to 2^16+1
+        >>> quickRSA=QuickRSA()
         >>> x = 2
         >>> exponent = 17
-        >>> QuickRSA.multiply_and_square(x, exponent)
+        >>> quickRSA.multiply_and_square(x, exponent)
         562949953421312
         '''
         # translate the exponent to binary array, which is a str object
@@ -97,13 +99,13 @@ class QuickRSA:
     def multiplicative_inverse(self, x, n):
         '''
         find the multiplicative inverse of x on the base of n:y
+        x must be a prime
         x*y = 1 mod n, k*n+1=x*y, 
-        >>> multiplicative_inverse(9,10)
+        >>> quickRSA=QuickRSA()
+        >>> quickRSA.multiplicative_inverse(9,10)
         9
         '''
-        y=1
-        # the most niave solution, choose one by one number
-        while((x*y)%n != 1): y+=1
+        y=pow(3,x-2)%n
         return y
 
 if __name__ == "__main__":
