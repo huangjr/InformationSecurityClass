@@ -21,15 +21,15 @@ def key_generation(number_of_bit):
     # this process can be accelerated with miller rabin primality test.
     # the size of integer type in python is unlimited, so we can do anything we want
     quickRSA = acc_RSA.QuickRSA()
-    p = quickRSA.find_prime(number_of_bit,3)
-    q = quickRSA.find_prime(number_of_bit,3)
+    p = quickRSA.find_prime(int(number_of_bit/2),3)
+    q = quickRSA.find_prime(int(number_of_bit/2),3)
     # compute n=pxq
     n=p*q
     # compute phi(n) = (p-1)x(q-1)
     phi_n=(p-1)*(q-1)
     # find e by gcd(e, phi(n)) = 1
     # public key was default set to 2*16+1, to provide fase encryption
-    e = 2**16+1
+    e = pow(2,16)+1
     # find d by exd = 1 mod phi(n)
     d = quickRSA.multiplicative_inverse(e, phi_n)
     return (p,q,e,d,n)
@@ -60,29 +60,6 @@ def decryption(d, p, q, ciphertext):
 if __name__ == "__main__":
     '''
     program entry point, to interact with this program use the following command
-    >python RSA.py -k [number_of_bits]
-    public: e=[e], n=[n]; private: d=[d], p=[p], q=[q]
-
-    >python RSA.py -e [e] [n] [plaintext]
-    [cipherText]
-
-    >python RSA.py -d [d] [p] [q] [ciphertext]
-    [plaintext]
-    -----------------------------------------------------------------
-    interactive window:
-    Welcome to RSA program:
-    >g, generate public key and private key
-        >how many bit do you want?
-    >e, encrypt
-        >public key=
-        >plaintext=
-    >d, decrypt
-        >private key=
-        >ciphertext=
-        >p=
-        >q=
-    >x, exit
-        >see you
     '''
     import doctest, RSA, acc_RSA
     # doctest.testmod(RSA) # no test for now
@@ -94,7 +71,7 @@ if __name__ == "__main__":
         print(">x, exit")
         option=input(">>>")
         if option=='g':
-            print(">how many bit do you want?")
+            print(">how many bits do you want?")
             number_of_bits=input(">>>")
             p,q,e,d,n=key_generation(int(number_of_bits))
             print("p=",p)
@@ -109,7 +86,11 @@ if __name__ == "__main__":
             n=input(">>>")
             print(">plaintext")
             plaintext=input(">>>")
-            ciphertext=encryption(e,n,plaintext)
+            plainText=''
+            # convert plaintext to ascii code
+            for chr in plaintext:
+                plainText+=str(hex(ord(chr)))[2:]
+            ciphertext=encryption(int(e),int(n),int(plainText,16))
             print("Your cipherText= ", ciphertext)
         elif option=='d':
             print(">private key")
@@ -120,7 +101,14 @@ if __name__ == "__main__":
             q=input(">>>")
             print(">ciphertext")
             ciphertext=input(">>>")
-            plaintext=decryption(d,p,q,ciphertext)
-            print("Your plaintext= ", plaintext)
+            cipherText=''
+            for chr in ciphertext:
+                cipherText+=str(hex(ord(chr)))[2:]
+            plainText=str(decryption(int(d),int(p),int(q),int(cipherText,16)))
+            # convert plaintext from integer to ascii to str
+            plainText=hex(int(plainText,16))[2:]
+            plainText=bytes.fromhex(plainText).decode("utf8")
+            print("Your plaintext= ", plainText)
         elif option=='x':
+            print(">see you")
             exit()

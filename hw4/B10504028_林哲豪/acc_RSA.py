@@ -21,11 +21,11 @@ class QuickRSA:
         # choose a number from x-1, can be random
         a = random.randint(2, x-1)
         # compute b=a^m mod x
-        b = (a**m) % x
+        b = pow(a,m) % x
         if(b != 1 & b != (x-1)):
             i=1
             while(i<k & b!=(x-1)):
-                b=(b**2)%x
+                b= pow(b,2)%x
                 if b==1: return False
                 i=i+1
             if(b!=(x-1)): return False
@@ -45,7 +45,7 @@ class QuickRSA:
         y=x
         for a in exponent[2:]:
             # square on every round: y=y^2 mod n
-            y=y**2
+            y=pow(y,2)
             # mutiply on exponent[i] = 1: y=x*y mod n
             if a=='1':
                 y=y*x
@@ -63,8 +63,8 @@ class QuickRSA:
         # modular exponentiation: compute xp^dp mod p, xq^dq mod q, both eqaul N
         dq = d%(p-1)
         dp = d%(q-1)
-        yp = (xp**dp)%p
-        yq = (xq**dq)%q
+        yp = pow(xp,dp)%p
+        yq = pow(xq,dq)%q
         # inverse transportation
         cp= self.multiplicative_inverse(q, p)
         cq= self.multiplicative_inverse(p, q)
