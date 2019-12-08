@@ -45,13 +45,13 @@ class QuickRSA:
         # translate the exponent to binary array, which is a str object
         exponent = bin(exponent)
         y=x
-        for a in exponent[2:]:
+        for a in exponent[3:]:
             # square on every round: y=y^2 mod n
             y=pow(y,2)%n
             # mutiply on exponent[i] = 1: y=x*y mod n
             if a=='1':
                 y=(y*x)%n
-        return y%n
+        return y
 
     def crt_Decrypt(self, d,p,q,y):
         '''
@@ -102,7 +102,7 @@ class QuickRSA:
         x must be a prime
         x*y = 1 mod n, k*n+1=x*y, 
         >>> quickRSA=QuickRSA()
-        >>> quickRSA.multiplicative_inverse(9,10)
+        >>> quickRSA.multiplicative_inverse(71,200)
         9
         '''
         m0 = m 

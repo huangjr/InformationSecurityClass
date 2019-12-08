@@ -23,11 +23,12 @@ def key_generation(number_of_bit):
     quickRSA = acc_RSA.QuickRSA()
     p = quickRSA.find_prime(int(number_of_bit/2),3)
     q = quickRSA.find_prime(int(number_of_bit/2),3)
+    while(p == q):
+        q = quickRSA.find_prime(int(number_of_bit/2),3)
     # compute n=pxq
     n=p*q
     # compute phi(n) = (p-1)x(q-1)
     phi_n=(p-1)*(q-1)
-    # ax+by=ax+my, ax+my=1=ax(mod m), we can use extended gcd to find x and y, x is the multiplicative inverse.
     # public key was default set to 2*16+1, to provide fast encryption
     e = pow(2,16)+1
     # find d by exd = 1 mod phi(n)
@@ -40,8 +41,8 @@ def encryption(e, n, plaintext):
     encrypt plaintext with e:public key, n:given
     '''
     # encryption:
-    quickRSA = acc_RSA.QuickRSA()
-    ciphertext = quickRSA.multiply_and_square(plaintext, e, n)
+    quickRSA=acc_RSA.QuickRSA()
+    ciphertext = quickRSA.multiply_and_square(plaintext,e,n)
     return ciphertext
     # plaintext**e mod n= ciphertext
     # the exponentiation can be accelerated with multiply and square
@@ -52,8 +53,9 @@ def decryption(d, p, q, ciphertext):
     '''
     # decryption:
     # decryption can be accelerate with CRT, because we have know the p,q
-    quickRSA = acc_RSA.QuickRSA()
-    plainText = quickRSA.crt_Decrypt(d, p, q, ciphertext)
+    quickRSA=acc_RSA.QuickRSA()
+    n=p*q
+    plainText = quickRSA.multiply_and_square(ciphertext,d,n)
     return plainText
     # ciphertext**d mod n= plaintext
     # the exponentiation can be accelerated with multiply and square
@@ -92,6 +94,7 @@ if __name__ == "__main__":
             for chr in plaintext:
                 plainText+=str(hex(ord(chr)))[2:]
             ciphertext=encryption(int(e),int(n),int(plainText,16))
+            # ouput an decimal integer
             print("Your cipherText= ", ciphertext)
         elif option=='d':
             print(">private key")
@@ -102,11 +105,11 @@ if __name__ == "__main__":
             q=input(">>>")
             print(">ciphertext")
             ciphertext=input(">>>")
-            cipherText=''
-            for chr in ciphertext:
-                cipherText+=str(hex(ord(chr)))[2:]
-            plainText=str(decryption(int(d),int(p),int(q),int(cipherText,16)))
+            # take an integer as input
+            plainText=decryption(int(d),int(p),int(q),int(ciphertext))
             # convert plaintext from integer to ascii to str
+            plainText=hex(plainText)
+            print(plainText)
             plainText=hex(int(plainText,16))[2:]
             print(plainText)
             plainText=bytes.fromhex(plainText).decode("utf8")
