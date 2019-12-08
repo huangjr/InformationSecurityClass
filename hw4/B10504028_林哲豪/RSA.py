@@ -89,11 +89,10 @@ if __name__ == "__main__":
             n=input(">>>")
             print(">plaintext")
             plaintext=input(">>>")
-            plainText=''
+            ciphertext=''
             # convert plaintext to ascii code
-            for chr in plaintext:
-                plainText+=str(hex(ord(chr)))[2:]
-            ciphertext=encryption(int(e),int(n),int(plainText,16))
+            for char in plaintext:
+                ciphertext=ciphertext+str(encryption(int(e),int(n),ord(char)))+" "
             # ouput an decimal integer
             print("Your cipherText= ", ciphertext)
         elif option=='d':
@@ -106,14 +105,13 @@ if __name__ == "__main__":
             print(">ciphertext")
             ciphertext=input(">>>")
             # take an integer as input
-            plainText=decryption(int(d),int(p),int(q),int(ciphertext))
+            ciphertext=ciphertext.split(" ")
+            plaintext=''
+            for char in ciphertext:
+                plaintext=plaintext+chr(decryption(int(d),int(p),int(q),int(char)))
             # convert plaintext from integer to ascii to str
-            plainText=hex(plainText)
-            print(plainText)
-            plainText=hex(int(plainText,16))[2:]
-            print(plainText)
-            plainText=bytes.fromhex(plainText).decode("utf8")
-            print("Your plaintext= ", plainText)
+            print(plaintext)
+            print("Your plaintext= ", plaintext)
         elif option=='x':
             print(">see you")
             exit()
