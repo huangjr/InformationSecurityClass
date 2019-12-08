@@ -27,10 +27,11 @@ def key_generation(number_of_bit):
     n=p*q
     # compute phi(n) = (p-1)x(q-1)
     phi_n=(p-1)*(q-1)
-    # find e by gcd(e, phi(n)) = 1
-    # public key was default set to 2*16+1, to provide fase encryption
+    # ax+by=ax+my, ax+my=1=ax(mod m), we can use extended gcd to find x and y, x is the multiplicative inverse.
+    # public key was default set to 2*16+1, to provide fast encryption
     e = pow(2,16)+1
     # find d by exd = 1 mod phi(n)
+    # find e by gcd(e, phi(n)) = 1, for e an phi_n are coprime, we can use the EGCD algorithm
     d = quickRSA.multiplicative_inverse(e, phi_n)
     return (p,q,e,d,n)
 
@@ -107,6 +108,7 @@ if __name__ == "__main__":
             plainText=str(decryption(int(d),int(p),int(q),int(cipherText,16)))
             # convert plaintext from integer to ascii to str
             plainText=hex(int(plainText,16))[2:]
+            print(plainText)
             plainText=bytes.fromhex(plainText).decode("utf8")
             print("Your plaintext= ", plainText)
         elif option=='x':

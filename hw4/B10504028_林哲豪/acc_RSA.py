@@ -11,7 +11,7 @@ class QuickRSA:
         >>> quickRSA.miller_rabin(48)
         False
         >>> quickRSA.miller_rabin(47)
-        False
+        True
         '''
         # transformation to x-1= 2^n x r
         m = x-1
@@ -39,7 +39,7 @@ class QuickRSA:
         >>> quickRSA=QuickRSA()
         >>> x = 2
         >>> exponent = 17
-        >>> quickRSA.multiply_and_square(x, exponent)
+        >>> quickRSA.multiply_and_square(x, exponent,20)
         562949953421312
         '''
         # translate the exponent to binary array, which is a str object
@@ -47,10 +47,10 @@ class QuickRSA:
         y=x
         for a in exponent[2:]:
             # square on every round: y=y^2 mod n
-            y=pow(y,2)
+            y=pow(y,2)%n
             # mutiply on exponent[i] = 1: y=x*y mod n
             if a=='1':
-                y=y*x
+                y=(y*x)%n
         return y%n
 
     def crt_Decrypt(self, d,p,q,y):
@@ -96,7 +96,7 @@ class QuickRSA:
             finded=result[0]
         return result[1]
 
-    def multiplicative_inverse(self, x, n):
+    def multiplicative_inverse(self, a, m):
         '''
         find the multiplicative inverse of x on the base of n:y
         x must be a prime
@@ -105,8 +105,28 @@ class QuickRSA:
         >>> quickRSA.multiplicative_inverse(9,10)
         9
         '''
-        y=pow(3,x-2)%n
-        return y
+        m0 = m 
+        y = 0
+        x = 1
+    
+        if (m == 1) : 
+            return 0
+    
+        while (a > 1) : 
+            q = a // m 
+    
+            t = m 
+    
+            m = a % m 
+            a = t 
+            t = y 
+
+            y = x - q * y 
+            x = t 
+        if (x < 0) : 
+            x = x + m0 
+    
+        return x 
 
 if __name__ == "__main__":
     import acc_RSA, doctest
