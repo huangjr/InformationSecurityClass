@@ -40,7 +40,7 @@ class QuickRSA:
         >>> x = 2
         >>> exponent = 17
         >>> quickRSA.multiply_and_square(x, exponent,20)
-        562949953421312
+        12
         '''
         # translate the exponent to binary array, which is a str object
         exponent = bin(exponent)
@@ -57,6 +57,10 @@ class QuickRSA:
         '''
         p and q only know to the one have private key, so we use the information of p and q to shorten the decryption time.
         d=private key, p,q=large prime, y=cipherText
+        calculate y^d=x(mod pxq)
+        >>> quickRSA=QuickRSA()
+        >>> quickRSA.crt_Decrypt(3,7,5,10)
+        20
         '''
         # transformation: x to xq and xp
         n=p*q
@@ -65,8 +69,8 @@ class QuickRSA:
         # modular exponentiation: compute xp^dp mod p, xq^dq mod q, both eqaul N
         dq = d%(p-1)
         dp = d%(q-1)
-        yp = pow(xp,dp)%p
-        yq = pow(xq,dq)%q
+        yp = self.multiply_and_square(xp,dp,p)
+        yq = self.multiply_and_square(xq,dq,q)
         # inverse transportation
         cp= self.multiplicative_inverse(q, p)
         cq= self.multiplicative_inverse(p, q)
@@ -126,7 +130,7 @@ class QuickRSA:
         if (x < 0) : 
             x = x + m0 
     
-        return x 
+        return x
 
 if __name__ == "__main__":
     import acc_RSA, doctest
