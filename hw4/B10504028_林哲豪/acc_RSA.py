@@ -59,16 +59,18 @@ class QuickRSA:
         d=private key, p,q=large prime, y=cipherText
         calculate y^d=x(mod pxq)
         >>> quickRSA=QuickRSA()
-        >>> quickRSA.crt_Decrypt(3,7,5,10)
-        20
+        >>> chr(quickRSA.crt_Decrypt(43937,277,443,17300))
+        2
+        >>> chr(quickRSA.multiply_and_square(17300,43937,122711))
+        2
         '''
         # transformation: x to xq and xp
         n=p*q
         xp = y%p
         xq = y%q
         # modular exponentiation: compute xp^dp mod p, xq^dq mod q, both eqaul N
-        dq = d%(p-1)
-        dp = d%(q-1)
+        dp = d%(p-1)
+        dq = d%(q-1)
         yp = self.multiply_and_square(xp,dp,p)
         yq = self.multiply_and_square(xq,dq,q)
         # inverse transportation
@@ -107,7 +109,7 @@ class QuickRSA:
         x*y = 1 mod n, k*n+1=x*y, 
         >>> quickRSA=QuickRSA()
         >>> quickRSA.multiplicative_inverse(71,200)
-        9
+        31
         '''
         m0 = m 
         y = 0

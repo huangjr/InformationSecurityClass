@@ -55,7 +55,7 @@ def decryption(d, p, q, ciphertext):
     # decryption can be accelerate with CRT, because we have know the p,q
     quickRSA=acc_RSA.QuickRSA()
     n=p*q
-    plainText = quickRSA.multiply_and_square(ciphertext,d,n)
+    plainText = quickRSA.crt_Decrypt(d,p,q,ciphertext)
     return plainText
     # ciphertext**d mod n= plaintext
     # the exponentiation can be accelerated with multiply and square
