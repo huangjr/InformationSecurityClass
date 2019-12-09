@@ -13,7 +13,7 @@ def IsPrime(n):
         if n % i == 0: return False
     return True
 
-# use miller rabin test to check if n is prime, do k times in miller rabin test
+# use miller rabin test to check if n is prime, do k times in miller rabin test to enhence the accuracy
 def miller_rabin(n, k):
     '''
     >>> miller_rabin(192, 4)
@@ -46,6 +46,7 @@ def miller_rabin(n, k):
             return False
     return True
 
+# find a**-1 in mod m
 def modInverse(a, m) : 
     m0 = m 
     y = 0
@@ -70,12 +71,13 @@ def modInverse(a, m) :
     return x
 
 class RSA():
+    # bit is the length of p and q
     def __init__(self, bit):
         self.bit_length = bit
         self.p = random.getrandbits(self.bit_length)
         self.q = random.getrandbits(self.bit_length)
 
-        # check if p and q are both prime and not 0
+        # check if p and q are both prime and not 0, here we use miller_rabin function to check prime
         while self.p == 0 or miller_rabin(self.p, 4) == False:
             self.p = random.getrandbits(self.bit_length)
         while self.q == 0 or miller_rabin(self.q, 4) == False:
@@ -83,13 +85,16 @@ class RSA():
 
         # get n
         self.n = self.p * self.q
+
         # get phi_n
         self.phi_n = ( self.p - 1 ) * ( self.q - 1 )
+
         # get e
         for i in range(self.n // 2 , 2, -1):
             if math.gcd(i, self.phi_n) == 1:
                 self.e = i
                 break
+
         # get d
         self.d = modInverse(self.e, self.phi_n)
         # for i in range(self.n, 2, -1):
@@ -102,10 +107,15 @@ def Square_and_Multiply(message_num, e, n):
     >>> Square_and_Multiply(5, 10, 13)
     12
     '''
-    H = bin(e)[2:]
+    # transfer the exponent, 'e' to binary  
+    H = bin(e)[2:] 
+    # initial the first bit
     ciphertext_number = message_num
+
+    # every round when we go to next bit, we square ourselves
     for i in range(1, len(H)):
         ciphertext_number = pow(ciphertext_number, 2, n)
+        # if the bit is 1, we multiply 
         if int(H[i]) == 1:
             ciphertext_number = ciphertext_number * message_num % n
     return ciphertext_number
@@ -119,12 +129,14 @@ def Chinese_Remainder_Theorem(message_number, p, q, d, n):
     yq = Square_and_Multiply(xq, dq, q)
     cp = modInverse(q, p)
     cq = modInverse(p, q)
+    # the equation from chinese_remainder_theorem
     x = (q * cp * yp + p * cq * yq) % n
-
     return x
 
 if __name__ == "__main__":
     # doctest.testmod(Rsa)
+
+    # initial the RSA, and give the length of p, q
     if sys.argv[1] == 'init':
         bit = sys.argv[2]
         rsa = RSA(int(bit))
@@ -134,22 +146,28 @@ if __name__ == "__main__":
         e = rsa.e
         d = rsa.d
 
-        print(rsa.bit_length)
-        print(p, miller_rabin(p, 4), 'p')
-        print(q, miller_rabin(q, 4), 'q')
-        print(e, '=e', rsa.phi_n, '=phi_n','gcd(e, phi_n)=', math.gcd(e, rsa.phi_n))
-        print(e, d, 'e*d % phi_n=', e*d % rsa.phi_n )
-        print(n)
+        print(rsa.bit_length, '=the length of bit for p and q')
+        print(p, '=p', 'Is prime?', miller_rabin(p, 4))
+        print(q, '=q', 'Is prime?', miller_rabin(q, 4))
+        print(e, '=e')
+        print(d, '=d')
+        print('gcd(e, phi_n)=', math.gcd(e, rsa.phi_n))
+        print('e*d % phi_n=', e*d % rsa.phi_n )
+        print(n, '=n')
 
+    # use RSA to encrypt, the input should be plaintext, n and e
+    # the output is the ciphertext, if the number can transfer to acsii, then we can see the words
+    # if the number cannot transfer to acsii, then we see the ciphered number 
     if sys.argv[1] == '-e':
         plaintext = sys.argv[2]
         n = int(sys.argv[3])
         e = int(sys.argv[4])
         ciphertext = []
-        # transfer plaintext to ascii
+        # encrypt the plaintext and transfer plaintext to ascii
         for num in [ord(char) for char in plaintext]:
             # ciphertext.append(num ** e % n)
             ciphertext.append(Square_and_Multiply(num, e, n))
+
         # get ciphertext
         try:
             print(''.join( [chr(number) for number in ciphertext] ))
@@ -158,6 +176,9 @@ if __name__ == "__main__":
             print(','.join( [str(number) for number in ciphertext] ))
             print('number above is too large, cannot transfer to ascii')
 
+    # use RSA to decrypt, the input should be ciphertext, p, q, d and n
+    # the output is the plaintext
+    # the input is ciphertext, it could be words or the ciphered numbers which is divided with ','
     if sys.argv[1] == '-d':
         ciphertext = sys.argv[2]
         p = int(sys.argv[3])
@@ -166,9 +187,9 @@ if __name__ == "__main__":
         n = int(sys.argv[6])
         plaintext = []
         
-        # transfer ciphertext to ascii
+        # decrypt the ciphtertext and transfer ciphertext to ascii
         try:
-            # if the number is too large for ascii, the format would be number,number
+            # if the number is too large for ascii, the format would be number,number,...
             for num in [int(char) for char in ciphertext.split(',')]:
                 plaintext.append(Chinese_Remainder_Theorem(num, p, q, d, n))
         except:
