@@ -16,20 +16,22 @@ class QuickRSA:
         # transformation to x-1= 2^n x r
         m = x-1
         k = 0
-        while(m%2 != 0):
-            m = int(m/2)
-            k+=1
+        while((m%2) == 0):
+            m = m // 2
+            k = k+1
         # choose a number from x-1, can be random
-        a = random.randint(2, x-1)
+        a = random.randrange(2, x-2)
         # compute b=a^m mod x
-        b = pow(a,m) % x
-        if(b != 1 & b != (x-1)):
+        b = pow(a,m,x)
+        if(b != 1 and b != (x-1)):
             i=1
-            while(i<k & b!=(x-1)):
-                b= pow(b,2)%x
-                if b==1: return False
+            while(i<k and b!=(x-1)):
+                b= pow(b,2,x)
+                if b==1: 
+                    return False
                 i=i+1
-            if(b!=(x-1)): return False
+            if(b!=(x-1)): 
+                return False
         return True
 
     def multiply_and_square(self, x, exponent, n):
@@ -47,7 +49,7 @@ class QuickRSA:
         y=x
         for a in exponent[3:]:
             # square on every round: y=y^2 mod n
-            y=pow(y,2)%n
+            y=pow(y,2,n)
             # mutiply on exponent[i] = 1: y=x*y mod n
             if a=='1':
                 y=(y*x)%n
@@ -97,6 +99,7 @@ class QuickRSA:
         while not finded:
             r=random.getrandbits(number_of_bits)
             while r%2 != 1:
+                # if the random number is an even, then it's useless
                 r=random.getrandbits(number_of_bits)
             result=self.primality(r, security_coefficient)
             finded=result[0]
