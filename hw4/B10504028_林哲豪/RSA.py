@@ -1,16 +1,5 @@
 import acc_RSA
 # function declaration
-def gcd(x, y):
-    '''
-    compute GCD of x,y
-    but seems like it's useless here
-    >>> gcd(100,50)
-    50
-    '''
-    while(y): 
-        x, y = y, x % y 
-    return x
-
 def key_generation(number_of_bit):
     '''
     generate a key of number_of_bit,return p,q,e,d,n
@@ -29,7 +18,7 @@ def key_generation(number_of_bit):
     n=p*q
     # compute phi(n) = (p-1)x(q-1)
     phi_n=(p-1)*(q-1)
-    # public key was default set to 2*16+1, to provide fast encryption
+    # public key was default set to 2*16+1, to provide fast encryption--short private key
     e = pow(2,16)+1
     # find d by exd = 1 mod phi(n)
     # find e by gcd(e, phi(n)) = 1, for e an phi_n are coprime, we can use the EGCD algorithm
@@ -41,11 +30,11 @@ def encryption(e, n, plaintext):
     encrypt plaintext with e:public key, n:given
     '''
     # encryption:
+    # plaintext**e mod n= ciphertext
+    # the exponentiation can be accelerated with multiply and square
     quickRSA=acc_RSA.QuickRSA()
     ciphertext = quickRSA.multiply_and_square(plaintext,e,n)
     return ciphertext
-    # plaintext**e mod n= ciphertext
-    # the exponentiation can be accelerated with multiply and square
 
 def decryption(d, p, q, ciphertext):
     '''
@@ -53,12 +42,11 @@ def decryption(d, p, q, ciphertext):
     '''
     # decryption:
     # decryption can be accelerate with CRT, because we have know the p,q
-    quickRSA=acc_RSA.QuickRSA()
-    n=p*q
-    plainText = quickRSA.crt_Decrypt(d,p,q,ciphertext)
-    return plainText
     # ciphertext**d mod n= plaintext
     # the exponentiation can be accelerated with multiply and square
+    quickRSA=acc_RSA.QuickRSA()
+    plainText = quickRSA.crt_Decrypt(d,p,q,ciphertext)
+    return plainText
     
 if __name__ == "__main__":
     '''
@@ -79,7 +67,7 @@ if __name__ == "__main__":
             number_of_bits=input(">>> ")
             try:
                 p,q,e,d,n=key_generation(int(number_of_bits))
-                print("Here is your key information, store in wallet or paper, don't tell others your private key")
+                print(bcolors.OKBLUE + "Here is your key information, store in wallet or paper, don't tell others your private key" + bcolors.ENDC)
                 print("p=",p)
                 print("q=",q)
                 print("e=",e)
@@ -96,8 +84,8 @@ if __name__ == "__main__":
             plaintext=input(">>> ")
             try:
                 ciphertext=''
-                # convert plaintext to ascii code
                 for char in plaintext:
+                    # convert plaintext to ascii code
                     ciphertext=ciphertext+str(encryption(int(e),int(n),ord(char)))+" "
                 # ouput an decimal integer
                 print("Your cipherText= ", ciphertext)
@@ -118,9 +106,8 @@ if __name__ == "__main__":
                 plaintext=''
                 for char in ciphertext:
                     plaintext=plaintext+chr(decryption(int(d),int(p),int(q),int(char)))
-                # convert plaintext from integer to ascii to str
-                print(plaintext)
-                print("Your plaintext= ", plaintext)
+                    # convert plaintext from integer to ascii to str
+                print(bcolors.OKGREEN + "Your plaintext= ", plaintext + bcolors.ENDC)
             except:
                 print(bcolors.WARNING + "Warning: Please enter the right private key, don't do anything stupid." + bcolors.ENDC)
         elif option=='x':
