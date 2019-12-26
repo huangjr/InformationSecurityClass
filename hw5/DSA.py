@@ -28,3 +28,12 @@ v=(a^uq * b^u2 mod p) mod q
 if v=r mod q --> signature is valid
 else invalid
 '''
+
+if __name__ == "__main__":
+    '''
+    keygen {length}
+    sign {message}
+    verify {message}
+    '''
+    import sys
+    if sys.argv[]
