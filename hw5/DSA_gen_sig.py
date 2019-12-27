@@ -96,60 +96,61 @@ def miller_rabin(n, k):
             return False
     return True
 
+class DSA_gen:
+    # generation
+    def generation(self, p_bit_length, q_bit_length):
+        quickrsa = acc_RSA.QuickRSA()
 
-# generation
-def generation(p_bit_length, q_bit_length):
-    quickrsa = acc_RSA.QuickRSA()
+        p_bit_length = p_bit_length
+        q_bit_length = q_bit_length
 
-    p_bit_length = p_bit_length
-    q_bit_length = q_bit_length
-    
 
-    # find q
-    q = random.getrandbits(q_bit_length)
-    while miller_rabin(q, 4) != True:
+        # find q
         q = random.getrandbits(q_bit_length)
+        while miller_rabin(q, 4) != True:
+            q = random.getrandbits(q_bit_length)
 
-    # find p
-    x = random.getrandbits(p_bit_length - q_bit_length)
-    p = x * q + 1
-    while miller_rabin(p, 4) != True:
+        # find p
         x = random.getrandbits(p_bit_length - q_bit_length)
         p = x * q + 1
+        while miller_rabin(p, 4) != True:
+            x = random.getrandbits(p_bit_length - q_bit_length)
+            p = x * q + 1
 
-    # fix h = 2, find a
-    h = 2
-    k = (p - 1) // q
-    a = Square_and_Multiply(h, k, p) 
+        # fix h = 2, find a
+        h = 2
+        k = (p - 1) // q
+        a = Square_and_Multiply(h, k, p) 
 
-    # find d and b
-    d = random.randint(1, q-1)
-    b = Square_and_Multiply(a, d, p)
+        # find d and b
+        d = random.randint(1, q-1)
+        b = Square_and_Multiply(a, d, p)
 
-    return p, q, a, b, d
+        return p, q, a, b, d
 
 
-# signature
-def signature(message, p, q, a, b, d):
+    # signature
+    def signature(self, message, p, q, a, b, d):
 
-    # find ke
-    ke = random.randint(1, q-1)
-    ke_inverse = modInverse(ke, q)
+        # find ke
+        ke = random.randint(1, q-1)
+        ke_inverse = modInverse(ke, q)
 
-    # find sha(message) = m
-    m = int(hashlib.sha1(bytes(message, encoding = "utf8")).hexdigest(), 16)
-    
-    # find r
-    r = Square_and_Multiply(a, ke, p) % q
+        # find sha(message) = m
+        m = int(hashlib.sha1(bytes(message, encoding = "utf8")).hexdigest(), 16)
 
-    # find s
-    s = (m + d*r)*ke_inverse % q
+        # find r
+        r = Square_and_Multiply(a, ke, p) % q
 
-    return r, s
+        # find s
+        s = (m + d*r)*ke_inverse % q
+
+        return r, s
 
 
 if __name__ == "__main__":
-    p, q, a, b, d = generation(1024, 160)
+    dsa_gen = DSA_gen()
+    p, q, a, b, d = dsa_gen.generation(1024, 160)
     message = 'amy'
-    r, s = signature(message, p, q, a, b, d)
+    r, s = dsa_gen.signature(message, p, q, a, b, d)
     print(r, s)
