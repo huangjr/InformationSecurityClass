@@ -1,54 +1,40 @@
-import acc_RSA
-# function declaration
-def key_generation(number_of_bit):
-    '''
-    generate a key of number_of_bit,return p,q,e,d,n
-    >>> key_generation(20)
-    0
-    '''
-    # find two large prime:p,q
-    # this process can be accelerated with miller rabin primality test.
-    # the size of integer type in python is unlimited, so we can do anything we want
-    quickRSA = acc_RSA.QuickRSA()
-    p = quickRSA.find_prime(int(number_of_bit/2),3)
-    q = quickRSA.find_prime(int(number_of_bit/2),3)
-    while(p == q):
-        q = quickRSA.find_prime(int(number_of_bit/2),3)
-    # compute n=pxq
-    n=p*q
-    # compute phi(n) = (p-1)x(q-1)
-    phi_n=(p-1)*(q-1)
-    # public key was default set to 2*16+1, to provide fast encryption--short private key
-    e = pow(2,16)+1
-    # find d by exd = 1 mod phi(n)
-    # find e by gcd(e, phi(n)) = 1, for e an phi_n are coprime, we can use the EGCD algorithm
-    d = quickRSA.multiplicative_inverse(e, phi_n)
-    return (p,q,e,d,n)
+# generation
+'''
+p= 2^1023<p<2^1024
+q= divisor of (p-1) in 2^159<q<2^160
+a= a^q = 1 (mod p)= h^((p-1)/q) (mod p)
+b= a^d (mod p)
+d= 0<d<q
 
-def encryption(e, n, plaintext):
-    '''
-    encrypt plaintext with e:public key, n:given
-    '''
-    # encryption:
-    # plaintext**e mod n= ciphertext
-    # the exponentiation can be accelerated with multiply and square
-    quickRSA=acc_RSA.QuickRSA()
-    ciphertext = quickRSA.multiply_and_square(plaintext,e,n)
-    return ciphertext
+kpub=(p,q,a,b)
+kpr=(d)
+'''
 
-def decryption(d, p, q, ciphertext):
-    '''
-    Using crt accelerated decryption method defaultly
-    '''
-    # decryption:
-    # decryption can be accelerate with CRT, because we have know the p,q
-    # ciphertext**d mod n= plaintext
-    # the exponentiation can be accelerated with multiply and square
-    quickRSA=acc_RSA.QuickRSA()
-    plainText = quickRSA.crt_Decrypt(d,p,q,ciphertext)
-    return plainText
-    
+# signature
+'''
+ke=random(0,q) <-- temporary value
+signature=(r,s)
+r=(a^ke mod p) mod q
+s=(sha(x)+d*r)ke^-1 mod q
+'''
+
+# verification
+'''
+w=s^-1 mod q
+u1=w*sha(x)mod q
+u2=w*r mod q
+v=(a^uq * b^u2 mod p) mod q
+
+if v=r mod q --> signature is valid
+else invalid
+'''
+
 if __name__ == "__main__":
+    '''
+    keygen {length}
+    sign {message}
+    verify {message}
+    '''
     '''
     program entry point, to interact with this program use the following command
     '''
