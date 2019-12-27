@@ -6,7 +6,7 @@ def generation(plaintext):
     output: p q a b d 
     p= 2^1023<p<2^1024
     q= divisor of (p-1) in 2^159<q<2^160
-    a= a^q = 1 (mod p)= h^((p-1)/q) (mod p)
+    a=> a^q = 1 (mod p) => h^((p-1)/q) (mod p)
     b= a^d (mod p)
     d= 0<d<q
 
