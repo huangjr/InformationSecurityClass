@@ -28,8 +28,8 @@ def miller_rabin(n, k):
     r, s = 0, n - 1
     # to get s and r from the equation: n - 1 = 2**r*s 
     while s % 2 == 0:
-        r += 1
-        s //= 2
+        r += 1 # u
+        s //= 2 # r
     # check n for k times
     for _ in range(k):
         a = random.randrange(2, n - 2)
@@ -131,6 +131,10 @@ def Chinese_Remainder_Theorem(message_number, p, q, d, n):
     cq = modInverse(p, q)
     # the equation from chinese_remainder_theorem
     x = (q * cp * yp + p * cq * yq) % n
+    # go back to ciphertext = ciphertext
+    # u = (xq - xp) * cq % q
+    # x = xp + p * u
+
     return x
 
 if __name__ == "__main__":

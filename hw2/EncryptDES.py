@@ -170,6 +170,8 @@ def encrypt(key, plaintext):
     C = AfterPC1[:28]
     D = AfterPC1[28:]
 
+
+    T= []
     # make every round keys
     every_round_keys = []
     every_round_keys_forFunc = [['' for i in range(48)] for j in range(16)]
@@ -178,6 +180,11 @@ def encrypt(key, plaintext):
         C = every_round_keys[round_number - 1][:28]
         D = every_round_keys[round_number - 1][28:]
         every_round_keys_forFunc[round_number - 1] = permutateToTable(every_round_keys[round_number - 1],PC2)
+        T.append(''.join(every_round_keys_forFunc[round_number - 1] ))
+
+    for t in T:
+        print(hex(int(t,2)))
+
 
     # prepare the plaintext
     Binary_plaintext = hexToBinary(plaintext)
