@@ -77,10 +77,10 @@ if __name__ == "__main__":
         print(">x, exit")
         option=input(">>> ")
         if option=='g':
-            print(">how many bits do you want?")
-            number_of_bits=input(">>> ")
+            print(">what is your plaintext? ")
+            plaintext=input(">>> ")
             try:
-                p,q,a,b,d=generation()
+                p,q,a,b,d=generation(plaintext)
                 print(bcolors.OKBLUE + "Here is your key information, store in wallet or paper, don't tell others your private key" + bcolors.ENDC)
                 print("p= ",p)
                 print("q= ",q)
@@ -99,7 +99,7 @@ if __name__ == "__main__":
             print(">plaintext")
             plaintext=input(">>> ")
             try:
-                r,s=signature(plaintext,p,q,a,b)
+                r,s=signature(plaintext,int(p),int(q),int(a),int(b))
                 print('r= ',r)
                 print('s= ',s)
             except TypeError:
@@ -121,10 +121,12 @@ if __name__ == "__main__":
             plaintext=input(">>> ")
             # take an integer as input
             try:
-                result = verification(plaintext,r,s,a,b,p,q)
+                result = verification(plaintext,int(r),int(s),int(a),int(b),int(p),int(q))
                 print(bcolors.OKGREEN + "Verification Result= ", result + bcolors.ENDC)
             except TypeError:
                 print(bcolors.WARNING + "Warning: Please enter the right type of plaintext, don't do anything stupid." + bcolors.ENDC)
+            except ValueError:
+                print(bcolors.WARNING + "Warning: Please enter the right type of key, don't do anything stupid." + bcolors.ENDC)
         elif option=='x':
             print(bcolors.OKBLUE + "~~See you~~" + bcolors.ENDC)
             exit()
