@@ -120,11 +120,11 @@ class DSA_gen:
         # fix h = 2, find a
         h = 2
         k = (p - 1) // q
-        a = Square_and_Multiply(h, k, p) 
+        a = pow(h, k, p) 
 
         # find d and b
         d = random.randint(1, q-1)
-        b = Square_and_Multiply(a, d, p)
+        b = pow(a, d, p)
 
         return p, q, a, b, d
 
@@ -140,7 +140,7 @@ class DSA_gen:
         m = int(hashlib.sha1(bytes(message, encoding = "utf8")).hexdigest(), 16)
 
         # find r
-        r = Square_and_Multiply(a, ke, p) % q
+        r = pow(a, ke, p) % q
 
         # find s
         s = (m + d*r)*ke_inverse % q

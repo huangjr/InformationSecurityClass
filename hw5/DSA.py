@@ -1,6 +1,6 @@
-import hashlib, acc_RSA
+import hashlib, acc_RSA, DSA_gen_sig
 
-def generation(plaintext):
+def generation():
     '''
     input: plaintext
     output: p q a b d 
@@ -14,10 +14,11 @@ def generation(plaintext):
     kpr=(d)
     '''
     # import from partner
-    
+    dsa_gen_sig = DSA_gen_sig.DSA_gen()
+    p,q,a,b,d = dsa_gen_sig.generation(1024, 160)
     return (p,q,a,b,d)
 
-def signature(p,q,a,b):
+def signature(plaintext,p,q,a,b,d):
     '''
     input: plaintext p q a b
     output: r s
@@ -27,7 +28,8 @@ def signature(p,q,a,b):
     s=(sha(x)+d*r)ke^-1 mod q
     '''
     # import from partner
-
+    dsa_gen_sig = DSA_gen_sig.DSA_gen()
+    r,s = dsa_gen_sig.signature(plaintext,p,q,a,b,d)
     return (r,s)
 
 def verification(x,r,s,a,b,p,q):
@@ -45,13 +47,11 @@ def verification(x,r,s,a,b,p,q):
     True
     '''
     acc_rsa=acc_RSA.QuickRSA()
-    sha=hashlib.sha1()
-    sha.update(x)
-    shaX=int(sha.digest().hex(),16)
+    shaX = int(hashlib.sha1(bytes(x, encoding = "utf8")).hexdigest(), 16)
     w=acc_rsa.multiplicative_inverse(s,q)
     u1=(w*shaX)%q
     u2=(w*r)%q
-    v=((pow(a,u1)*pow(b,u2))%p)%q
+    v=((pow(a,u1,p)*pow(b,u2,p))%p)%q
     if v==r:
         return True
     else:
@@ -76,11 +76,10 @@ if __name__ == "__main__":
         print(">v, verification")
         print(">x, exit")
         option=input(">>> ")
+        # key generation
         if option=='g':
-            print(">what is your plaintext? ")
-            plaintext=input(">>> ")
             try:
-                p,q,a,b,d=generation(plaintext)
+                p,q,a,b,d=generation()
                 print(bcolors.OKBLUE + "Here is your key information, store in wallet or paper, don't tell others your private key" + bcolors.ENDC)
                 print("p= ",p)
                 print("q= ",q)
@@ -89,21 +88,27 @@ if __name__ == "__main__":
                 print("d= ",d)
             except TypeError: 
                 print(bcolors.WARNING + "Warning: Please enter an string, don't do anything stupid." + bcolors.ENDC)
+        # signature
         elif option=='s':
             print(">p")
-            e=input(">>> ")
+            p=input(">>> ")
             print(">q")
-            n=input(">>> ")
+            q=input(">>> ")
             print(">a")
+            a=input(">>> ")
+            print(">b")
+            b=input(">>> ")
+            print(">d")
             d=input(">>> ")
             print(">plaintext")
             plaintext=input(">>> ")
             try:
-                r,s=signature(plaintext,int(p),int(q),int(a),int(b))
+                r,s=signature(plaintext,int(p),int(q),int(a),int(b),int(d))
                 print('r= ',r)
                 print('s= ',s)
             except TypeError:
-                print(bcolors.WARNING + "Warning: Please enter the right private key, don't do anything stupid." + bcolors.ENDC)
+                print(bcolors.WARNING + "Warning: Please enter the right type of private key, don't do anything stupid." + bcolors.ENDC)
+        # signature verification
         elif option=='v':
             print(">p")
             p=input(">>> ")
@@ -120,13 +125,13 @@ if __name__ == "__main__":
             print(">plaintext")
             plaintext=input(">>> ")
             # take an integer as input
-            try:
-                result = verification(plaintext,int(r),int(s),int(a),int(b),int(p),int(q))
-                print(bcolors.OKGREEN + "Verification Result= ", result + bcolors.ENDC)
-            except TypeError:
-                print(bcolors.WARNING + "Warning: Please enter the right type of plaintext, don't do anything stupid." + bcolors.ENDC)
-            except ValueError:
-                print(bcolors.WARNING + "Warning: Please enter the right type of key, don't do anything stupid." + bcolors.ENDC)
+            # try:
+            result = verification(plaintext,int(r),int(s),int(a),int(b),int(p),int(q))
+            print(bcolors.OKGREEN + "Verification Result= ", result, bcolors.ENDC)
+            # except TypeError:
+            #     print(bcolors.WARNING + "Warning: Please enter the right type of plaintext, don't do anything stupid." + bcolors.ENDC)
+            # except ValueError:
+            #     print(bcolors.WARNING + "Warning: Please enter the right type of key, don't do anything stupid." + bcolors.ENDC)
         elif option=='x':
             print(bcolors.OKBLUE + "~~See you~~" + bcolors.ENDC)
             exit()
