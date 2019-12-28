@@ -67,7 +67,7 @@ if __name__ == "__main__":
     program entry point, to interact with this program use the following command
     '''
     import doctest, DSA, acc_RSA, bcolors
-    doctest.testmod(DSA) # no test for now
+    # doctest.testmod(DSA) # no test for now
     bcolors=bcolors.bcolors()
     while 1:
         print("Welcome to DSA program:")
