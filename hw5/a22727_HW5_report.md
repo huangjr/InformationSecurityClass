@@ -18,37 +18,46 @@ MacOS Sierra 10.12.6. Python 3
   > python DSA.py  
   
   執行結果：  
-  ![](https://imgur.com/ECxvXRZ)  
+  ![Imgur](https://i.imgur.com/ECxvXRZ.png) 
   g指key generation, s指signature, v指verification, x指exit離開，使用者可以輸入要執行的英文字母。  
   
-* RSA加密  
+* g (產生公鑰p,q,a,b與私鑰d)  
 
-  指令： (python ./Rsa.py -e {plaintext} {n} {e})  
-         設plaintext：SOS, n: 800881, e: 400439  
-  > python ./Rsa.py -e SOS 800881 400439    
+  指令： 
+  > g    
   
   執行結果：  
-  ![](https://i.imgur.com/vdz7dwh.png)  
-  印出ciphertext,這裡是㝳髵㝳,當init的bit數輸入較大時,用前面所產生出來的n以及e都會較大,在做完RSA加密後的數字也會變大,無法轉成可見字元,此時會印出
-  加密後的數字,並用','相連,如下圖,先做初始化50個bit產生出n及e,再用來做加密：  
-  ![](https://i.imgur.com/1OJTtI6.png)  
-  此時的n為8968138575292343660932279537,e是4484069287646171830466139767,轉出來的三個加密數字6503239710066372034480909034,8593655076183664752095032237,6503239710066372034480909034
-  太大,會用逗號的方式相連印出加密數字。  
+  ![Imgur](https://i.imgur.com/eOQMb66.png)
+  產生出DSA的p, q, a, b, d，等等簽章與認證時使用。  
   
-* RSA解密  
+* s (簽章)  
 
-  指令： (python ./Rsa.py -d {ciphertext} {p} {q} {d} {n})  
-  設ciphertext：㝳髵㝳, p: 907, q: 883, d: 673367, n: 800881  
-  > python ./Rsa.py -d 㝳髵㝳 907 883 673367 800881  
+  指令： 
+  > s    
   
   執行結果：  
-  ![](https://i.imgur.com/jerXjDI.png)  
-  印出plaintext是SOS,與加密前的訊息一致。若ciphertext不是可見字元,而是加密後的數字,一樣可以當作解密的input,用上述的例子解密,如下圖： 
+  ![Imgur](https://i.imgur.com/Afae6f5.png)
+  輸入s，系統會問使用者p, q, a,b , d，使用者根據前面g得到的p, q, a, b, d，一項項複製上去，最後再打上自己預定的message，也就是系統顯示的plaintext，這裏我們輸入ntust，會得到r與s，如下圖。  
+  ![Imgur](https://i.imgur.com/FdoC9SP.png)  
   
-  > python ./Rsa.py -d 6503239710066372034480909034,8593655076183664752095032237,6503239710066372034480909034 63508718965969 141211139530273 3236007956662825865655592775 8968138575292343660932279537
+* v (認證)  
+
+  指令： 
+  > v    
   
-  ![](https://i.imgur.com/RkrAb5v.png)   
-  ciphertext是6503239710066372034480909034,8593655076183664752095032237,6503239710066372034480909034,而p是63508718965969, q是141211139530273, d是3236007956662825865655592775, n是8968138575292343660932279537
+  執行結果：  
+  ![Imgur](https://i.imgur.com/DVosEQQ.png)
+  輸入v，系統會問使用者p, q, a, b, d, plaintext，我們一樣依上面的數據一項項輸入，最後系統會顯示認證有沒有成功，成功會顯示True。    
+  ![Imgur](https://i.imgur.com/wZIWbSD.png)  
+  
+* x (離開系統)  
+
+  指令： 
+  > x    
+  
+  執行結果：  
+  ![Imgur](https://i.imgur.com/lo1bywl.png)
+  輸入x，系統會顯示See you，然後離開。  
   
 ## 程式碼解說  
 
