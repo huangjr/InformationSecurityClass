@@ -37,7 +37,7 @@ MacOS Sierra 10.12.6. Python 3
   
   執行結果：  
   ![Imgur](https://i.imgur.com/Afae6f5.png)
-  輸入s，系統會問使用者p, q, a,b , d，使用者根據前面g得到的p, q, a, b, d，一項項複製上去，最後再打上自己預定的message，也就是系統顯示的plaintext，這裏我們輸入ntust，會得到r與s，如下圖。  
+  輸入s，系統會問使用者p, q, a, b , d，使用者根據前面g得到的p, q, a, b, d，一項項複製上去，最後再打上自己預定的message，也就是系統顯示的plaintext，這裏我們輸入ntust，會得到r與s，如下圖。  
   ![Imgur](https://i.imgur.com/FdoC9SP.png)  
   
 * v (認證)  
@@ -47,7 +47,7 @@ MacOS Sierra 10.12.6. Python 3
   
   執行結果：  
   ![Imgur](https://i.imgur.com/DVosEQQ.png)
-  輸入v，系統會問使用者p, q, a, b, d, plaintext，我們一樣依上面的數據一項項輸入，最後系統會顯示認證有沒有成功，成功會顯示True。    
+  輸入v，系統會問使用者p, q, a, b, d, r, s, plaintext，我們一樣依上面的數據一項項輸入，最後系統會顯示認證有沒有成功，成功會顯示Verification Result = True。    
   ![Imgur](https://i.imgur.com/wZIWbSD.png)  
   
 * x (離開系統)  
