@@ -11,16 +11,15 @@
 ## 建置環境  
 MacOS Sierra 10.12.6. Python 3  
 
-## 操作方式與執行結果
-* 初始化RSA的p與q長度  
+## 操作方式與執行過程截圖
+* 執行DSA.py檔  
 
-  指令： (python ./Rsa.py init {bit長度})
-  > python ./Rsa.py init 10  
+  指令：
+  > python DSA.py  
   
   執行結果：  
-  ![](https://i.imgur.com/8Nq2F8S.png)  
-  第一行是印出bit的長度，第二,三行是p與q的數字以及執行過miller_rabin Test是否為prime的結果,第四,五行是e與d,第六行是印出gcd(e, phi_n)的結果,
-  第七行是印出e*d % phi_n的結果，確認兩項都是1表示程式碼產生出來的e與d是正確的。第八行則是印出n的數字。上述的數字會用到後面指令的加解密。  
+  ![](https://imgur.com/ECxvXRZ)  
+  g指key generation, s指signature, v指verification, x指exit離開，使用者可以輸入要執行的英文字母。  
   
 * RSA加密  
 
