@@ -47,7 +47,7 @@ MacOS Sierra 10.12.6. Python 3
   
   執行結果：  
   ![Imgur](https://i.imgur.com/DVosEQQ.png)
-  輸入v，系統會問使用者p, q, a, b, d, r, s, plaintext，我們一樣依上面的數據一項項輸入，最後系統會顯示認證有沒有成功，成功會顯示Verification Result = True。    
+  輸入v，系統會問使用者p, q, a, b, r, s, plaintext，我們一樣依上面的數據一項項輸入，最後系統會顯示認證有沒有成功，成功會顯示Verification Result = True。    
   ![Imgur](https://i.imgur.com/wZIWbSD.png)  
   
 * x (離開系統)  
