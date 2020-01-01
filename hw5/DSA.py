@@ -104,9 +104,12 @@ if __name__ == "__main__":
             plaintext=input(">>> ")
             try:
                 r,s=signature(plaintext,int(p),int(q),int(a),int(b),int(d))
+                print(bcolors.OKBLUE + "Here is your signature" + bcolors.ENDC)
                 print('r= ',r)
                 print('s= ',s)
             except TypeError:
+                print(bcolors.WARNING + "Warning: Please enter the right type of private key, don't do anything stupid." + bcolors.ENDC)
+            except ValueError:
                 print(bcolors.WARNING + "Warning: Please enter the right type of private key, don't do anything stupid." + bcolors.ENDC)
         # signature verification
         elif option=='v':
@@ -125,13 +128,16 @@ if __name__ == "__main__":
             print(">plaintext")
             plaintext=input(">>> ")
             # take an integer as input
-            # try:
-            result = verification(plaintext,int(r),int(s),int(a),int(b),int(p),int(q))
-            print(bcolors.OKGREEN + "Verification Result= ", result, bcolors.ENDC)
-            # except TypeError:
-            #     print(bcolors.WARNING + "Warning: Please enter the right type of plaintext, don't do anything stupid." + bcolors.ENDC)
-            # except ValueError:
-            #     print(bcolors.WARNING + "Warning: Please enter the right type of key, don't do anything stupid." + bcolors.ENDC)
+            try:
+                result = verification(plaintext,int(r),int(s),int(a),int(b),int(p),int(q))
+                if result==True:
+                    print(bcolors.OKGREEN + "Verification Success ", bcolors.ENDC)
+                else:
+                    print(bcolors.WARNING + "Verification Fail ", bcolors.ENDC)
+            except TypeError:
+                print(bcolors.WARNING + "Warning: Please enter the right type of plaintext, don't do anything stupid." + bcolors.ENDC)
+            except ValueError:
+                print(bcolors.WARNING + "Warning: Please enter the right type of key, don't do anything stupid." + bcolors.ENDC)
         elif option=='x':
             print(bcolors.OKBLUE + "~~See you~~" + bcolors.ENDC)
             exit()
